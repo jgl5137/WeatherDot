@@ -20,7 +20,8 @@
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:theme="@style/Theme.MyWeatherApp"
-            app:popupTheme="@style/Theme.MyWeatherApp.PopupOverlay" />
+            app:popupTheme="@style/Theme.MyWeatherApp.PopupOverlay"
+            app:titleTextColor="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

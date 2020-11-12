@@ -21,6 +21,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:menu="@menu/activity_main_drawer" />
+        android:background="?attr/colorPrimary"
+        android:theme="@style/Theme.MyWeatherApp.NavigationViewTheme"
+        app:menu="@menu/activity_main_drawer"
+        app:itemTextColor="@color/white" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
