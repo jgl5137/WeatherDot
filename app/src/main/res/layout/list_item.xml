@@ -6,8 +6,9 @@
     android:layout_height="match_parent"
     android:layout_margin="5dp"
     android:orientation="horizontal"
+    card_view:cardBackgroundColor="?attr/colorPrimary"
     card_view:cardCornerRadius="5sp"
-    card_view:cardElevation="5sp"
+    card_view:cardElevation="8dp"
     card_view:contentPadding="16dp" >
 
     <RelativeLayout
@@ -25,7 +26,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="filler day"
-            android:layout_toEndOf="@id/condition_image"/>
+            android:layout_toEndOf="@id/condition_image"
+            android:textColor="?attr/colorOnPrimary"/>
 
         <TextView
             android:id="@+id/condition_field"
@@ -33,14 +35,16 @@
             android:layout_height="wrap_content"
             android:text="filler condition"
             android:layout_below="@id/day_field"
-            android:layout_toEndOf="@id/condition_image"/>
+            android:layout_toEndOf="@id/condition_image"
+            android:textColor="?attr/colorOnPrimary"/>
 
         <TextView
             android:id="@+id/temp_high_low"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="50 / 25"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentEnd="true"
+            android:textColor="?attr/colorOnPrimary"/>
 
     </RelativeLayout>
 
