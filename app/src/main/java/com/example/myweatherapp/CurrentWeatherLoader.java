@@ -6,11 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.loader.content.AsyncTaskLoader;
 
-public class WeatherLoader extends AsyncTaskLoader<String> {
+public class CurrentWeatherLoader extends AsyncTaskLoader<String> {
 
     private String myWeatherQueryString;
 
-    public WeatherLoader(@NonNull Context context, String queryString) {
+    public CurrentWeatherLoader(@NonNull Context context, String queryString) {
         super(context);
         myWeatherQueryString = queryString;
     }

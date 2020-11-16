@@ -1,6 +1,7 @@
 package com.example.myweatherapp;
 
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 public class NetworkUtils {
+    private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
     private static final String API_KEY = "e83f7c0a2b6d6c8316fea85fb334134c";
     private static final String CURRENT_OPEN_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?";
     private static final String QUERY_PARAM = "q";
@@ -56,7 +58,7 @@ public class NetworkUtils {
 
             currentWeatherJSONString = builder.toString();
 
-            System.out.println(currentWeatherJSONString);
+            Log.d(LOG_TAG, currentWeatherJSONString);
         }
         catch (IOException e) {
             e.printStackTrace();

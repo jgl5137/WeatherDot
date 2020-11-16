@@ -21,11 +21,18 @@ import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<String> {
     private EditText myWeatherInput;
     private TextView myDayText;
     private TextView myConditionText;
     private TextView myHighLowText;
+    private TextView myCurrentTempDisplay;
+
+    private static final int CURRENT_WEATHER_LOADER = 1;
+    private static final int DETAILED_WEATHER_LOADER = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         myDayText = findViewById(R.id.day_field);
         myConditionText = findViewById(R.id.condition_field);
         myHighLowText = findViewById(R.id.temp_high_low);
+        myCurrentTempDisplay = findViewById(R.id.current_Temp_Display);
 
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -49,6 +57,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
+        }
+
+        if(LoaderManager.getInstance(this).getLoader(1) != null) {
+            LoaderManager.getInstance(this).initLoader(1, null, this);
+        }
+        if(LoaderManager.getInstance(this).getLoader(2) != null) {
+            LoaderManager.getInstance(this).initLoader(2, null, this);
         }
     }
 
@@ -75,25 +90,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(networkInfo != null && networkInfo.isConnected() && queryString.length() != 0) {
             Bundle queryBundle = new Bundle();
             queryBundle.putString("queryString", queryString);
-            LoaderManager.getInstance(this).restartLoader(0, queryBundle, this);
+            LoaderManager.getInstance(this).restartLoader(1, queryBundle, this);
         }
     }
 
     @NonNull
     @Override
     public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
-        String queryString = "";
+        if(id == CURRENT_WEATHER_LOADER) {
+            String queryString = "";
 
-        if(args != null) {
-            queryString = args.getString("queryString");
+            if(args != null) {
+                queryString =  args.getString("queryString");
+            }
+            return new CurrentWeatherLoader(this, queryString);
         }
+        if(id == DETAILED_WEATHER_LOADER) {
 
-        return new WeatherLoader(this, queryString);
+        }
+        return null;
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
+        int id = loader.getId();
+        if(id == CURRENT_WEATHER_LOADER) {
+            try{
+                JSONObject jsonObject = new JSONObject(data);
+                JSONObject coordObject = jsonObject.getJSONObject("coord");
+                JSONObject weatherDescObject = jsonObject.getJSONObject("weather");
+                JSONObject mainObject = jsonObject.getJSONObject("main");
+                int i = 0;
+                String day = null;
+                String condition = null;
+                String temp_Current = null;
+                String temp_High = null;
+                String temp_Low = null;
 
+                try{
+                    temp_Current = mainObject.getString("temp");
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if(temp_Current != null) {
+                    myCurrentTempDisplay.setText(temp_Current);
+                }
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
