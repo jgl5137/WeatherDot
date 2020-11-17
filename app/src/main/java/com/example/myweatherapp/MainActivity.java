@@ -94,9 +94,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    public void searchDetailedWeather(int lat, int lon) {
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = null;
+        if(connManager != null) {
+            networkInfo = connManager.getActiveNetworkInfo();
+        }
+
+        if(networkInfo != null && networkInfo.isConnected()) {
+            Bundle queryBundle = new Bundle();
+            queryBundle.putInt("latitude", lat);
+            queryBundle.putInt("longitude", lon);
+            LoaderManager.getInstance(this).restartLoader(2, queryBundle, this);
+        }
+    }
+
     @NonNull
     @Override
-    public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
+    public Loader onCreateLoader(int id, @Nullable Bundle args) {
         if(id == CURRENT_WEATHER_LOADER) {
             String queryString = "";
 
@@ -106,7 +121,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return new CurrentWeatherLoader(this, queryString);
         }
         if(id == DETAILED_WEATHER_LOADER) {
+            int queryLat = 0;
+            int queryLon = 0;
 
+            if(args != null) {
+                queryLat = args.getInt("latitude");
+                queryLon = args.getInt("longitude");
+            }
+            return new DetailedWeatherLoader(this, queryLat, queryLon);
         }
         return null;
     }

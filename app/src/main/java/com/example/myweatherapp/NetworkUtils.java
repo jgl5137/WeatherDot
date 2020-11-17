@@ -78,4 +78,8 @@ public class NetworkUtils {
         }
         return currentWeatherJSONString;
     }
+
+    static String getDetailedWeather(int queryLat, int queryLon) {
+        return null; //Come back to this to finish.
+    }
 }
