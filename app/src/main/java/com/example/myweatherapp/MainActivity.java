@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @NonNull
     @Override
-    public Loader onCreateLoader(int id, @Nullable Bundle args) {
+    public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
         if(id == CURRENT_WEATHER_LOADER) {
             String queryString = "";
 
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             try{
                 JSONObject jsonObject = new JSONObject(data);
                 JSONObject coordObject = jsonObject.getJSONObject("coord");
-                JSONObject weatherDescObject = jsonObject.getJSONObject("weather");
+                JSONArray weatherDescObject = jsonObject.getJSONArray("weather");
                 JSONObject mainObject = jsonObject.getJSONObject("main");
                 int i = 0;
                 String day = null;
@@ -148,19 +149,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String temp_Current = null;
                 String temp_High = null;
                 String temp_Low = null;
+                int coord_lat = 0;
+                int coord_lon = 0;
 
                 try{
                     temp_Current = mainObject.getString("temp");
+                    coord_lat = coordObject.getInt("lat");
+                    coord_lon = coordObject.getInt("lon");
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
                 if(temp_Current != null) {
                     myCurrentTempDisplay.setText(temp_Current);
+                    searchDetailedWeather(coord_lat, coord_lon);
                 }
             }
             catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        if(id == DETAILED_WEATHER_LOADER) {
+
         }
     }
 
