@@ -83,7 +83,7 @@ public class NetworkUtils {
         return currentWeatherJSONString;
     }
 
-    static String getDetailedWeather(int queryLat, int queryLon) {
+    static String getDetailedWeather(double queryLat, double queryLon) {
         HttpsURLConnection urlConnection = null;
         BufferedReader reader = null;
         String detailedWeatherJSONString = null;
@@ -123,7 +123,7 @@ public class NetworkUtils {
 
             detailedWeatherJSONString = builder.toString();
 
-            detailedWeatherJSONString = detailedWeatherJSONString.replaceAll(",", "\n");
+            //detailedWeatherJSONString = detailedWeatherJSONString.replaceAll(",", "\n");
 
             Log.d(LOG_TAG, detailedWeatherJSONString);
         }

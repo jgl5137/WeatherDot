@@ -6,8 +6,11 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -25,11 +28,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<String> {
+    private CityViewModel myCityViewModel;
+    private RecyclerView myRecyclerView;
+    private WeatherListAdapter myAdapter;
     private EditText myWeatherInput;
-    private TextView myDayText;
-    private TextView myConditionText;
-    private TextView myHighLowText;
     private TextView myCurrentTempDisplay;
 
     private static final int CURRENT_WEATHER_LOADER = 1;
@@ -41,9 +46,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         myWeatherInput = findViewById(R.id.search_field);
-        myDayText = findViewById(R.id.day_field);
-        myConditionText = findViewById(R.id.condition_field);
-        myHighLowText = findViewById(R.id.temp_high_low);
         myCurrentTempDisplay = findViewById(R.id.current_Temp_Display);
 
         setSupportActionBar(toolbar);
@@ -66,6 +68,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(LoaderManager.getInstance(this).getLoader(2) != null) {
             LoaderManager.getInstance(this).initLoader(2, null, this);
         }
+
+        //myRecyclerView = findViewById(R.id.recyclerview);
+
+        myCityViewModel = ViewModelProviders.of(this).get(CityViewModel.class);
+
+        myCityViewModel.insert(new City("Pittsburgh"));
+
+        myCityViewModel.getAllCities().observe(this, new Observer<List<City>>() {
+            @Override
+            public void onChanged(List<City> cities) {
+
+            }
+        });
     }
 
     @Override
@@ -95,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void searchDetailedWeather(int lat, int lon) {
+    public void searchDetailedWeather(double lat, double lon) {
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = null;
         if(connManager != null) {
@@ -104,8 +119,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(networkInfo != null && networkInfo.isConnected()) {
             Bundle queryBundle = new Bundle();
-            queryBundle.putInt("latitude", lat);
-            queryBundle.putInt("longitude", lon);
+            queryBundle.putDouble("latitude", lat);
+            queryBundle.putDouble("longitude", lon);
             LoaderManager.getInstance(this).restartLoader(2, queryBundle, this);
         }
     }
@@ -122,12 +137,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return new CurrentWeatherLoader(this, queryString);
         }
         if(id == DETAILED_WEATHER_LOADER) {
-            int queryLat = 0;
-            int queryLon = 0;
+            double queryLat = 0;
+            double queryLon = 0;
 
             if(args != null) {
-                queryLat = args.getInt("latitude");
-                queryLon = args.getInt("longitude");
+                queryLat = args.getDouble("latitude");
+                queryLon = args.getDouble("longitude");
             }
             return new DetailedWeatherLoader(this, queryLat, queryLon);
         }
@@ -149,13 +164,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String temp_Current = null;
                 String temp_High = null;
                 String temp_Low = null;
-                int coord_lat = 0;
-                int coord_lon = 0;
+                double coord_lat = 0;
+                double coord_lon = 0;
 
                 try{
                     temp_Current = mainObject.getString("temp");
-                    coord_lat = coordObject.getInt("lat");
-                    coord_lon = coordObject.getInt("lon");
+                    coord_lat = coordObject.getDouble("lat");
+                    coord_lon = coordObject.getDouble("lon");
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -169,7 +184,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
         if(id == DETAILED_WEATHER_LOADER) {
+            try{
+                JSONObject jsonDetailedObject = new JSONObject(data);
+                JSONArray jsonDailyObject = jsonDetailedObject.getJSONArray("daily");
 
+                int i = 0;
+                String day = null;
+                String cond = null;
+                String temps = null;
+
+                while(i < jsonDailyObject.length()) {
+                    JSONObject daily = jsonDailyObject.getJSONObject(i);
+                    JSONObject temp = daily.getJSONObject("temp");
+
+                    try{
+                        day = daily.getString("dt");
+                        temps = temp.getString("max") + " " + temp.getString("min");
+                        cond = "Cloudy";
+
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    i++;
+                }
+
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

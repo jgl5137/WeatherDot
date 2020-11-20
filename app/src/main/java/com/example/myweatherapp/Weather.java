@@ -1,14 +1,38 @@
 package com.example.myweatherapp;
 
-import androidx.room.Entity;
-
-@Entity(tableName = "weather_table")
 public class Weather {
 
-    private String city;
-    private int lon;
-    private int lat;
-    private String description;
-    private int temp;
-    private int temp_min_high;
+    private String date;
+    private String condition;
+    private String temp_high_low;
+
+    public Weather(String date, String cond, String high_low) {
+        this.date = date;
+        this.condition = cond;
+        this.temp_high_low = high_low;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    public String getTemp_high_low() {
+        return temp_high_low;
+    }
+
+    public void setTemp_high_low(String temp_high_low) {
+        this.temp_high_low = temp_high_low;
+    }
 }

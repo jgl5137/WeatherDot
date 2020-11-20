@@ -8,10 +8,10 @@ import androidx.loader.content.AsyncTaskLoader;
 
 public class DetailedWeatherLoader extends AsyncTaskLoader<String> {
 
-    private int myQueryLat;
-    private int myQueryLon;
+    private double myQueryLat;
+    private double myQueryLon;
 
-    public DetailedWeatherLoader(@NonNull Context context, int lat, int lon) {
+    public DetailedWeatherLoader(@NonNull Context context, double lat, double lon) {
         super(context);
         myQueryLat = lat;
         myQueryLon = lon;
