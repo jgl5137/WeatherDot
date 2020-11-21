@@ -9,15 +9,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.WeatherViewHolder> {
 
     private final LayoutInflater myInflater;
-    private List<Weather> myWeather;
+    private ArrayList<Weather> myWeather;
 
-    WeatherListAdapter(Context context) {
+    WeatherListAdapter(Context context, ArrayList<Weather> weatherData) {
         myInflater = LayoutInflater.from(context);
+        this.myWeather = weatherData;
     }
 
     @NonNull

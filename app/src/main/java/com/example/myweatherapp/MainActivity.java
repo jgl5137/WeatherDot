@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
@@ -28,6 +29,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<String> {
@@ -36,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private WeatherListAdapter myAdapter;
     private EditText myWeatherInput;
     private TextView myCurrentTempDisplay;
+    private ArrayList<Weather> myWeatherData;
 
     private static final int CURRENT_WEATHER_LOADER = 1;
     private static final int DETAILED_WEATHER_LOADER = 2;
@@ -70,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         //myRecyclerView = findViewById(R.id.recyclerview);
+        //myRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         myCityViewModel = ViewModelProviders.of(this).get(CityViewModel.class);
 
@@ -168,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 double coord_lon = 0;
 
                 try{
-                    temp_Current = mainObject.getString("temp");
+                    temp_Current = "" + mainObject.getInt("temp") + "\u2109";
                     coord_lat = coordObject.getDouble("lat");
                     coord_lon = coordObject.getDouble("lon");
                 }catch (Exception e) {
@@ -189,27 +198,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 JSONArray jsonDailyObject = jsonDetailedObject.getJSONArray("daily");
 
                 int i = 0;
-                String day = null;
-                String cond = null;
-                String temps = null;
+                long dt;
+                String day;
+                String cond;
+                String temps;
+                myWeatherData = new ArrayList<Weather>();
+                String timezone = jsonDetailedObject.getString("timezone");
 
                 while(i < jsonDailyObject.length()) {
                     JSONObject daily = jsonDailyObject.getJSONObject(i);
                     JSONObject temp = daily.getJSONObject("temp");
 
                     try{
-                        day = daily.getString("dt");
-                        temps = temp.getString("max") + " " + temp.getString("min");
+                        dt = daily.getLong("dt");
+                        day = getDate(dt, timezone);
                         cond = "Cloudy";
-
+                        temps = "H: " + temp.getInt("max") + "\u2109 / " + "L: " + temp.getInt("min") + "\u2109";
+                        myWeatherData.add(new Weather(day, cond, temps));
                     }
                     catch (Exception e) {
                         e.printStackTrace();
                     }
                     i++;
                 }
-
-
+                myRecyclerView = findViewById(R.id.recyclerview);
+                myRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                myAdapter = new WeatherListAdapter(this, myWeatherData);
+                myRecyclerView.setAdapter(myAdapter);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -220,5 +235,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onLoaderReset(@NonNull Loader<String> loader) {
 
+    }
+
+    public String getDate(long dt, String timezone) {
+        Date date = new java.util.Date(dt*1000L);
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM d");
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone(timezone));
+        String formattedDate = sdf.format(date);
+        return formattedDate;
     }
 }
