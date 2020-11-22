@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:orientation="horizontal"
-    card_view:cardBackgroundColor="?attr/colorPrimary"
+    card_view:cardBackgroundColor="?attr/colorPrimaryLight"
     card_view:cardCornerRadius="5sp"
     card_view:cardElevation="8dp"
     card_view:contentPadding="16dp" >
@@ -18,7 +18,8 @@
         <ImageView
             android:id="@+id/condition_image"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true" />
         
         <TextView
             android:id="@+id/day_field"
