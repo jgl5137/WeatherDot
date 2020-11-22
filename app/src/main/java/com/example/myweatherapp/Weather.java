@@ -3,11 +3,13 @@ package com.example.myweatherapp;
 public class Weather {
 
     private String date;
+    private String icon;
     private String condition;
     private String temp_high_low;
 
-    public Weather(String date, String cond, String high_low) {
+    public Weather(String date, String icon, String cond, String high_low) {
         this.date = date;
+        this.icon = icon;
         this.condition = cond;
         this.temp_high_low = high_low;
     }
@@ -18,6 +20,14 @@ public class Weather {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public String getCondition() {

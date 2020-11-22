@@ -200,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 int i = 0;
                 long dt;
                 String day;
+                String icon;
                 String cond;
                 String temps;
                 myWeatherData = new ArrayList<Weather>();
@@ -208,13 +209,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 while(i < jsonDailyObject.length()) {
                     JSONObject daily = jsonDailyObject.getJSONObject(i);
                     JSONObject temp = daily.getJSONObject("temp");
+                    JSONArray weatherArr = daily.getJSONArray("weather");
+                    JSONObject weatherArrObject = weatherArr.getJSONObject(0);
 
                     try{
                         dt = daily.getLong("dt");
                         day = getDate(dt, timezone);
-                        cond = "Cloudy";
-                        temps = "H: " + temp.getInt("max") + "\u2109 / " + "L: " + temp.getInt("min") + "\u2109";
-                        myWeatherData.add(new Weather(day, cond, temps));
+                        icon = weatherArrObject.getString("icon");
+                        cond = capitalize(weatherArrObject.getString("description"));
+                        temps = "High: " + temp.getInt("max") + "\u2109 \n" + "Low: " + temp.getInt("min") + "\u2109";
+                        myWeatherData.add(new Weather(day, icon, cond, temps));
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -243,5 +247,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sdf.setTimeZone(java.util.TimeZone.getTimeZone(timezone));
         String formattedDate = sdf.format(date);
         return formattedDate;
+    }
+
+    public static String capitalize(String input) {
+        String[] words = input.toLowerCase().split(" ");
+        StringBuilder builder = new StringBuilder();
+        for(String s : words) {
+            String cap = s.substring(0, 1).toUpperCase() + s.substring(1);
+            builder.append(cap + " ");
+        }
+        return builder.toString();
     }
 }

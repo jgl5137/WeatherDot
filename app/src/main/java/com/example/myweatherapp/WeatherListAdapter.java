@@ -4,10 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +19,12 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
 
     private final LayoutInflater myInflater;
     private ArrayList<Weather> myWeather;
+    private Context myContext;
 
     WeatherListAdapter(Context context, ArrayList<Weather> weatherData) {
         myInflater = LayoutInflater.from(context);
         this.myWeather = weatherData;
+        this.myContext = context;
     }
 
     @NonNull
@@ -34,6 +39,8 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         if(myWeather != null) {
             Weather current = myWeather.get(position);
             holder.myDayText.setText(current.getDate());
+            String iconURL = "https://openweathermap.org/img/wn/" + current.getIcon() + ".png";
+            Glide.with(myContext).load(iconURL).override(110, 110).into(holder.myConditionView);
             holder.myConditionText.setText(current.getCondition());
             holder.myHighLowText.setText(current.getTemp_high_low());
         }
@@ -52,6 +59,7 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
     class WeatherViewHolder extends RecyclerView.ViewHolder {
 
         private TextView myDayText;
+        private ImageView myConditionView;
         private TextView myConditionText;
         private TextView myHighLowText;
 
@@ -59,6 +67,7 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
             super(itemView);
 
             myDayText = itemView.findViewById(R.id.day_field);
+            myConditionView = itemView.findViewById(R.id.condition_image);
             myConditionText = itemView.findViewById(R.id.condition_field);
             myHighLowText = itemView.findViewById(R.id.temp_high_low);
         }
