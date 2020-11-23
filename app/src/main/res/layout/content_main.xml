@@ -8,32 +8,11 @@
     android:background="?attr/colorPrimary"
     app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
-    <EditText
-        android:id="@+id/search_field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textColor="?attr/colorOnPrimary"
-        android:theme="@style/EditTextStyle"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <Button
-        android:id="@+id/search_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search"
-        android:onClick="searchWeather"
-        android:backgroundTint="?attr/colorSecondary"
-        app:layout_constraintTop_toBottomOf="@id/search_field"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/current_Temp_Display"/>
-
     <TextView
         android:id="@+id/current_Temp_Display"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/search_button"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

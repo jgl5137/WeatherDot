@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".MainActivity" >
 
     <com.google.android.material.appbar.AppBarLayout
@@ -21,7 +23,22 @@
             android:background="?attr/colorPrimary"
             android:theme="@style/Theme.MyWeatherApp"
             app:popupTheme="@style/Theme.MyWeatherApp.PopupOverlay"
-            app:titleTextColor="@color/white" />
+            app:titleTextColor="@color/white" >
+
+            <EditText
+                android:id="@+id/search_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:width="150dp"
+                android:singleLine="true"
+                android:inputType="textCapWords|textAutoCorrect"
+                android:imeOptions="actionSearch"
+                android:hint="Enter City Name"
+                android:textColorHint="?attr/colorOnPrimary"
+                android:textColor="?attr/colorOnPrimary"
+                android:theme="@style/EditTextStyle" />
+
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

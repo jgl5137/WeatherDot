@@ -17,8 +17,12 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private EditText myWeatherInput;
     private TextView myCurrentTempDisplay;
     private ArrayList<Weather> myWeatherData;
+    private NavigationView navigationView;
 
     private static final int CURRENT_WEATHER_LOADER = 1;
     private static final int DETAILED_WEATHER_LOADER = 2;
@@ -54,9 +59,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         myWeatherInput = findViewById(R.id.search_field);
+        myWeatherInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    searchWeather(textView);
+                    textView.clearFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
         myCurrentTempDisplay = findViewById(R.id.current_Temp_Display);
 
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         if(drawer != null) {
@@ -64,11 +81,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+//        SubMenu subMenu;
+
+        navigationView = findViewById(R.id.nav_view);
 
         if(navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
+
+//        Menu menu = navigationView.getMenu();
+
+//        subMenu = menu.addSubMenu(getString(R.string.recent_locations_submenu_title));
+//        subMenu.add(0, Menu.FIRST, Menu.FIRST, myWeatherInput.getText());
 
         if(LoaderManager.getInstance(this).getLoader(1) != null) {
             LoaderManager.getInstance(this).initLoader(1, null, this);
@@ -219,6 +243,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         cond = capitalize(weatherArrObject.getString("description"));
                         temps = "High: " + temp.getInt("max") + "\u2109 \n" + "Low: " + temp.getInt("min") + "\u2109";
                         myWeatherData.add(new Weather(day, icon, cond, temps));
+
+//                        Menu menu = navigationView.getMenu();
+//                        MenuItem addedMI = menu.getItem(R.id.recent_locations);
+//                        addedMI.setTitle(myWeatherInput.getText());
+//                        menu.add(i, Menu.FIRST, Menu.FIRST, myWeatherInput.getText());
                     }
                     catch (Exception e) {
                         e.printStackTrace();
