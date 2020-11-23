@@ -34,9 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
-import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView myCurrentTempDisplay;
     private ArrayList<Weather> myWeatherData;
     private NavigationView navigationView;
+    private int menuItemOrder;
 
     private static final int CURRENT_WEATHER_LOADER = 1;
     private static final int DETAILED_WEATHER_LOADER = 2;
@@ -81,18 +79,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         toggle.syncState();
 
-//        SubMenu subMenu;
-
         navigationView = findViewById(R.id.nav_view);
 
         if(navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
 
-//        Menu menu = navigationView.getMenu();
-
-//        subMenu = menu.addSubMenu(getString(R.string.recent_locations_submenu_title));
-//        subMenu.add(0, Menu.FIRST, Menu.FIRST, myWeatherInput.getText());
+        menuItemOrder = 800;
 
         if(LoaderManager.getInstance(this).getLoader(1) != null) {
             LoaderManager.getInstance(this).initLoader(1, null, this);
@@ -137,6 +130,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if(networkInfo != null && networkInfo.isConnected() && queryString.length() != 0) {
+            MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
+            SubMenu subMenu = recentLocItem.getSubMenu();
+            subMenu.add(Menu.NONE, Menu.NONE, menuItemOrder, queryString);
+            menuItemOrder -= 5;
+
             Bundle queryBundle = new Bundle();
             queryBundle.putString("queryString", queryString);
             LoaderManager.getInstance(this).restartLoader(1, queryBundle, this);
@@ -243,11 +241,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         cond = capitalize(weatherArrObject.getString("description"));
                         temps = "High: " + temp.getInt("max") + "\u2109 \n" + "Low: " + temp.getInt("min") + "\u2109";
                         myWeatherData.add(new Weather(day, icon, cond, temps));
-
-//                        Menu menu = navigationView.getMenu();
-//                        MenuItem addedMI = menu.getItem(R.id.recent_locations);
-//                        addedMI.setTitle(myWeatherInput.getText());
-//                        menu.add(i, Menu.FIRST, Menu.FIRST, myWeatherInput.getText());
                     }
                     catch (Exception e) {
                         e.printStackTrace();

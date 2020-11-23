@@ -4,9 +4,7 @@
     <item android:title="@string/recent_locations_submenu_title"
         android:id="@+id/recent_locations">
         <menu>
-            <item
-                android:id="@+id/location_1"
-                android:title="Location 1" />
+
         </menu>
     </item>
 
