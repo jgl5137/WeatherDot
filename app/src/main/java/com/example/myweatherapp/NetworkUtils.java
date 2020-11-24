@@ -123,8 +123,6 @@ public class NetworkUtils {
 
             detailedWeatherJSONString = builder.toString();
 
-            //detailedWeatherJSONString = detailedWeatherJSONString.replaceAll(",", "\n");
-
             Log.d(LOG_TAG, detailedWeatherJSONString);
         }
         catch (IOException e) {

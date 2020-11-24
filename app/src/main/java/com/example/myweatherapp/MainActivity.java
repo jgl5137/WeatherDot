@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -26,6 +27,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView myCurrentTempDisplay;
     private ArrayList<Weather> myWeatherData;
     private NavigationView navigationView;
+    private ArrayList<String> recentLocList;
     private int menuItemOrder;
 
     private static final int CURRENT_WEATHER_LOADER = 1;
@@ -85,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationView.setNavigationItemSelectedListener(this);
         }
 
+        recentLocList = new ArrayList<String>();
+
         menuItemOrder = 800;
 
         if(LoaderManager.getInstance(this).getLoader(1) != null) {
@@ -93,9 +98,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(LoaderManager.getInstance(this).getLoader(2) != null) {
             LoaderManager.getInstance(this).initLoader(2, null, this);
         }
-
-        //myRecyclerView = findViewById(R.id.recyclerview);
-        //myRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         myCityViewModel = ViewModelProviders.of(this).get(CityViewModel.class);
 
@@ -111,6 +113,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
+        if(item.getItemId() == Menu.NONE) {
+            drawer.closeDrawer(GravityCompat.START);
+            myWeatherInput.setText(item.getTitle());
+            searchWeather(myWeatherInput);
+            return true;
+        }
+
         return false;
     }
 
@@ -130,14 +141,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if(networkInfo != null && networkInfo.isConnected() && queryString.length() != 0) {
-            MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
-            SubMenu subMenu = recentLocItem.getSubMenu();
-            subMenu.add(Menu.NONE, Menu.NONE, menuItemOrder, queryString);
-            menuItemOrder -= 5;
-
             Bundle queryBundle = new Bundle();
             queryBundle.putString("queryString", queryString);
             LoaderManager.getInstance(this).restartLoader(1, queryBundle, this);
+        }
+        else {
+            if(queryString.length() == 0) {
+                Toast.makeText(this, "No city name detected. Please input a valid city name.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -182,10 +193,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
+        if(data == null) {
+            Toast.makeText(this, "Invalid city name. Please check your spelling and input a valid city name.", Toast.LENGTH_LONG).show();
+        }
         int id = loader.getId();
-        if(id == CURRENT_WEATHER_LOADER) {
+        if(id == CURRENT_WEATHER_LOADER && data != null) {
             try{
                 JSONObject jsonObject = new JSONObject(data);
+
+                if(!recentLocList.contains(jsonObject.getString("name"))) {
+                    MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
+                    SubMenu subMenu = recentLocItem.getSubMenu();
+                    subMenu.add(Menu.NONE, Menu.NONE, menuItemOrder, jsonObject.getString("name"));
+                    recentLocList.add(jsonObject.getString("name"));
+                    menuItemOrder -= 5;
+                }
+
                 JSONObject coordObject = jsonObject.getJSONObject("coord");
                 JSONArray weatherDescObject = jsonObject.getJSONArray("weather");
                 JSONObject mainObject = jsonObject.getJSONObject("main");
@@ -214,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 e.printStackTrace();
             }
         }
-        if(id == DETAILED_WEATHER_LOADER) {
+        if(id == DETAILED_WEATHER_LOADER && data != null) {
             try{
                 JSONObject jsonDetailedObject = new JSONObject(data);
                 JSONArray jsonDailyObject = jsonDetailedObject.getJSONArray("daily");
