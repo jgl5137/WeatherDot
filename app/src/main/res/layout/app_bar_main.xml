@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,35 +7,47 @@
     android:fitsSystemWindows="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MyWeatherApp.AppBarOverlay" >
+        android:theme="@style/Theme.MyWeatherApp.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
             android:theme="@style/Theme.MyWeatherApp"
             app:popupTheme="@style/Theme.MyWeatherApp.PopupOverlay"
-            app:titleTextColor="@color/white" >
+            app:titleTextColor="@color/white">
 
             <EditText
                 android:id="@+id/search_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:width="150dp"
-                android:singleLine="true"
-                android:inputType="textCapWords|textAutoCorrect"
-                android:imeOptions="actionSearch"
                 android:hint="Enter City Name"
-                android:textColorHint="?attr/colorOnPrimary"
+                android:imeOptions="actionSearch"
+                android:inputType="textCapWords|textAutoCorrect"
+                android:singleLine="true"
                 android:textColor="?attr/colorOnPrimary"
+                android:textColorHint="?attr/colorOnPrimary"
                 android:theme="@style/EditTextStyle" />
+
+            <ToggleButton
+                android:id="@+id/favorite_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/favorites_selector"
+                android:minWidth="30dp"
+                android:minHeight="30dp"
+                android:textOff=""
+                android:textOn=""
+                android:onClick="setFavorite"
+                android:enabled="false"/>
 
         </androidx.appcompat.widget.Toolbar>
 

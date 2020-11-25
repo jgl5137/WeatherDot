@@ -28,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<Weather> myWeatherData;
     private NavigationView navigationView;
     private ArrayList<String> recentLocList;
+    private ToggleButton favoritesButton;
     private int menuItemOrder;
 
     private static final int CURRENT_WEATHER_LOADER = 1;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        favoritesButton = findViewById(R.id.favorite_button);
         myWeatherInput = findViewById(R.id.search_field);
         myWeatherInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -66,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(actionId == EditorInfo.IME_ACTION_SEARCH) {
                     searchWeather(textView);
                     textView.clearFocus();
+                    favoritesButton.setEnabled(true);
+                    favoritesButton.setChecked(false);
                     return true;
                 }
                 return false;
@@ -101,7 +106,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         myCityViewModel = ViewModelProviders.of(this).get(CityViewModel.class);
 
-        myCityViewModel.insert(new City("Pittsburgh"));
+//        myCityViewModel.insert(new City("Pittsburgh"));
+
+//        getApplicationContext().deleteDatabase("city_database");
 
         myCityViewModel.getAllCities().observe(this, new Observer<List<City>>() {
             @Override
@@ -302,5 +309,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             builder.append(cap + " ");
         }
         return builder.toString();
+    }
+
+    public void setFavorite(View view) {
+        boolean checked = ((ToggleButton) view).isChecked();
+        String searchedCity = myWeatherInput.getText().toString();
+
+        if(checked) {
+            myCityViewModel.insert(new City(searchedCity));
+        }
     }
 }

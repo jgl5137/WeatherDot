@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="@string/recent_locations_submenu_title"
-        android:id="@+id/recent_locations">
+    <item
+        android:id="@+id/favorite_locations"
+        android:title="Favorites">
+        <menu>
+
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/recent_locations"
+        android:title="@string/recent_locations_submenu_title">
         <menu>
 
         </menu>
