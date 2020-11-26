@@ -10,6 +10,7 @@ import java.util.List;
 public class CityViewModel extends AndroidViewModel {
     private CityRepository myRepository;
     private LiveData<List<City>> myAllCities;
+    private List<City> myListCities;
 
     public CityViewModel(Application application) {
         super(application);
@@ -27,5 +28,9 @@ public class CityViewModel extends AndroidViewModel {
 
     public void deleteCity(City city) {
         myRepository.deleteCity(city);
+    }
+
+    List<City> getListCities() {
+        return myRepository.getListCities();
     }
 }

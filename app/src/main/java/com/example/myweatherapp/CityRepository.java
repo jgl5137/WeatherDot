@@ -6,10 +6,12 @@ import android.os.AsyncTask;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class CityRepository {
     private CityDao myCityDao;
     private LiveData<List<City>> myAllCities;
+    private List<City> myListCities;
 
     public CityRepository(Application application) {
         CityRoomDatabase db = CityRoomDatabase.getDatabase(application);
@@ -27,6 +29,17 @@ public class CityRepository {
 
     public void deleteCity(City city) {
         new deleteCityAsyncTask(myCityDao).execute(city);
+    }
+
+    List<City> getListCities() {
+        try {
+            return new getCityListAsyncTask(myCityDao).execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return myListCities;
     }
 
     private static class insertAsyncTask extends AsyncTask<City, Void, Void> {
@@ -55,6 +68,20 @@ public class CityRepository {
         protected Void doInBackground(City... cities) {
             myAsyncTaskDao.deleteCity(cities[0]);
             return null;
+        }
+    }
+
+    private static class getCityListAsyncTask extends AsyncTask<Void, Void, List<City>> {
+
+        private CityDao myAsyncTaskDao;
+
+        getCityListAsyncTask(CityDao dao) {
+            myAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected List<City> doInBackground(Void... voids) {
+            return myAsyncTaskDao.getListCities();
         }
     }
 }

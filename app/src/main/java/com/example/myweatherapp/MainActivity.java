@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
@@ -39,7 +40,9 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<String> {
     private CityViewModel myCityViewModel;
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<String> recentLocList;
     private ToggleButton favoritesButton;
     private int menuItemOrder;
+    private ArrayList<City> myCities;
 
     private static final int CURRENT_WEATHER_LOADER = 1;
     private static final int DETAILED_WEATHER_LOADER = 2;
@@ -106,16 +110,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         myCityViewModel = ViewModelProviders.of(this).get(CityViewModel.class);
 
-//        myCityViewModel.insert(new City("Pittsburgh"));
-
 //        getApplicationContext().deleteDatabase("city_database");
 
         myCityViewModel.getAllCities().observe(this, new Observer<List<City>>() {
             @Override
             public void onChanged(List<City> cities) {
-
+                myCities = (ArrayList<City>) cities;
             }
         });
+
+        myCities = (ArrayList<City>) myCityViewModel.getListCities();
+
+        createInitialFavorites(myCities); //Maybe create a new Query / new method in ViewModel that returns just the list <------------------- FOLLOW THIS NEXT TIME
     }
 
     @Override
@@ -315,8 +321,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         boolean checked = ((ToggleButton) view).isChecked();
         String searchedCity = myWeatherInput.getText().toString();
 
-        if(checked) {
-            myCityViewModel.insert(new City(searchedCity));
+        for(int i = 0; i < myCities.size(); i++) {
+            if(checked && !myCities.contains(searchedCity)) {
+                myCityViewModel.insert(new City(searchedCity));
+
+                MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
+                SubMenu subMenu = favoriteLocItem.getSubMenu();
+                subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), searchedCity);
+
+                Toast.makeText(this, "\"" + searchedCity + "\"" + " has been added to Favorites!", Toast.LENGTH_SHORT).show();
+            }
+            if(myCities.get(i).getMyCity().equals(searchedCity)) {
+                Toast.makeText(this, "This location is already a favorite!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public void createInitialFavorites(ArrayList<City> citiesList) {
+        for(int i = 0; i < citiesList.size(); i++) {
+            MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
+            SubMenu subMenu = favoriteLocItem.getSubMenu();
+            subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), citiesList.get(i).getMyCity());
         }
     }
 }

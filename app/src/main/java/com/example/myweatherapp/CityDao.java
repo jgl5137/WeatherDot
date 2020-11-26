@@ -21,6 +21,6 @@ public interface CityDao {
     @Delete
     void deleteCity(City city);
 
-    @Query("SELECT EXISTS (SELECT * FROM city_table WHERE city = city)")
-    boolean cityExists(City city);
+    @Query("SELECT * FROM city_table")
+    List<City> getListCities();
 }
