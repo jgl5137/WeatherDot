@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ToggleButton favoritesButton;
     private int menuItemOrder;
     private ArrayList<City> myCities;
+    private Set<String> favCitiesSet;
 
     private static final int CURRENT_WEATHER_LOADER = 1;
     private static final int DETAILED_WEATHER_LOADER = 2;
@@ -121,7 +122,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         myCities = (ArrayList<City>) myCityViewModel.getListCities();
 
-        createInitialFavorites(myCities); //Maybe create a new Query / new method in ViewModel that returns just the list <------------------- FOLLOW THIS NEXT TIME
+        createInitialFavorites(myCities);
+
+        favCitiesSet = new HashSet<String>();
     }
 
     @Override
@@ -131,6 +134,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(item.getItemId() == Menu.NONE) {
             drawer.closeDrawer(GravityCompat.START);
             myWeatherInput.setText(item.getTitle());
+            favoritesButton.setEnabled(true);
+            searchWeather(myWeatherInput);
+            return true;
+        }
+
+        if(item.getItemId() == Menu.FIRST) {
+            drawer.closeDrawer(GravityCompat.START);
+            myWeatherInput.setText(item.getTitle());
+            favoritesButton.setEnabled(true);
+            favoritesButton.setChecked(true);
             searchWeather(myWeatherInput);
             return true;
         }
@@ -321,27 +334,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         boolean checked = ((ToggleButton) view).isChecked();
         String searchedCity = myWeatherInput.getText().toString();
 
+        MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
+        SubMenu subMenu = favoriteLocItem.getSubMenu();
+
         for(int i = 0; i < myCities.size(); i++) {
-            if(checked && !myCities.contains(searchedCity)) {
-                myCityViewModel.insert(new City(searchedCity));
+            favCitiesSet.add(myCities.get(i).getMyCity());
+        }
+        if(checked && !favCitiesSet.contains(searchedCity) && searchedCity != null) {
+            myCityViewModel.insert(new City(searchedCity));
 
-                MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
-                SubMenu subMenu = favoriteLocItem.getSubMenu();
-                subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), searchedCity);
+            subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), searchedCity);
 
-                Toast.makeText(this, "\"" + searchedCity + "\"" + " has been added to Favorites!", Toast.LENGTH_SHORT).show();
-            }
-            if(myCities.get(i).getMyCity().equals(searchedCity)) {
-                Toast.makeText(this, "This location is already a favorite!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "\"" + searchedCity + "\"" + " has been added to Favorites!", Toast.LENGTH_SHORT).show();
+        }
+        if(checked && favCitiesSet.contains(searchedCity)) {
+            Toast.makeText(this, "This location is already a favorite!", Toast.LENGTH_LONG).show();
+        }
+        if(!checked && favCitiesSet.contains(searchedCity)) {
+            for(int j = 0; j < myCities.size(); j++) {
+                if(searchedCity.equals(myCities.get(j).getMyCity())) {
+                    myCityViewModel.deleteCity(myCities.get(j));
+                    favCitiesSet.remove(myCities.get(j).getMyCity());
+
+                    Toast.makeText(this, "\"" + searchedCity + "\"" + " has been removed from Favorites!", Toast.LENGTH_SHORT).show();
+
+                    subMenu.clear();
+
+                    createInitialFavorites(myCities);
+                }
             }
         }
     }
 
     public void createInitialFavorites(ArrayList<City> citiesList) {
+        MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
+        SubMenu subMenu = favoriteLocItem.getSubMenu();
         for(int i = 0; i < citiesList.size(); i++) {
-            MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
-            SubMenu subMenu = favoriteLocItem.getSubMenu();
-            subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), citiesList.get(i).getMyCity());
+            subMenu.add(Menu.FIRST, Menu.FIRST, (800 - 5), citiesList.get(i).getMyCity());
         }
     }
 }
