@@ -24,6 +24,18 @@
         android:background="?attr/colorPrimary"
         android:theme="@style/Theme.MyWeatherApp.NavigationViewTheme"
         app:menu="@menu/activity_main_drawer"
-        app:itemTextColor="@color/white" />
+        app:itemTextColor="@color/white" >
+
+<!--        <Button-->
+<!--            android:id="@+id/clear_favorites"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="end"-->
+<!--            android:paddingTop="44dp"-->
+<!--            android:background="?android:selectableItemBackground"-->
+<!--            android:text="Clear All"-->
+<!--            android:textSize="11sp"-->
+<!--            android:textColor="?attr/colorSecondary"/>-->
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

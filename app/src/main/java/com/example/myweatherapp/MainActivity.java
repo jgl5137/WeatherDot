@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -146,6 +148,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             favoritesButton.setChecked(true);
             searchWeather(myWeatherInput);
             return true;
+        }
+
+        if(item.getItemId() == R.id.nav_send_feedback) {
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[] {"Jlau219@gmail.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Weather App Feedback");
+            if(intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
         }
 
         return false;
@@ -340,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for(int i = 0; i < myCities.size(); i++) {
             favCitiesSet.add(myCities.get(i).getMyCity());
         }
-        if(checked && !favCitiesSet.contains(searchedCity) && searchedCity != null) {
+        if(checked && !favCitiesSet.contains(searchedCity) && searchedCity.trim().length() > 0) {
             myCityViewModel.insert(new City(searchedCity));
 
             subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), searchedCity);
@@ -355,6 +367,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(searchedCity.equals(myCities.get(j).getMyCity())) {
                     myCityViewModel.deleteCity(myCities.get(j));
                     favCitiesSet.remove(myCities.get(j).getMyCity());
+                    myCities.remove(j);
 
                     Toast.makeText(this, "\"" + searchedCity + "\"" + " has been removed from Favorites!", Toast.LENGTH_SHORT).show();
 
