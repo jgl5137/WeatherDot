@@ -31,6 +31,10 @@ public class CityRepository {
         new deleteCityAsyncTask(myCityDao).execute(city);
     }
 
+    public void deleteAllCities() {
+        new deleteAllCitiesAsyncTask(myCityDao).execute();
+    }
+
     List<City> getListCities() {
         try {
             return new getCityListAsyncTask(myCityDao).execute().get();
@@ -82,6 +86,20 @@ public class CityRepository {
         @Override
         protected List<City> doInBackground(Void... voids) {
             return myAsyncTaskDao.getListCities();
+        }
+    }
+
+    private static class deleteAllCitiesAsyncTask extends AsyncTask<Void, Void, Void> {
+        private CityDao myAsyncTaskDao;
+
+        deleteAllCitiesAsyncTask(CityDao dao) {
+            myAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            myAsyncTaskDao.deleteAllCities();
+            return null;
         }
     }
 }

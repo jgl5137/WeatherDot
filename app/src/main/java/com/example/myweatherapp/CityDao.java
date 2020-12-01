@@ -21,6 +21,9 @@ public interface CityDao {
     @Delete
     void deleteCity(City city);
 
+    @Query("DELETE FROM city_table")
+    void deleteAllCities();
+
     @Query("SELECT * FROM city_table")
     List<City> getListCities();
 }

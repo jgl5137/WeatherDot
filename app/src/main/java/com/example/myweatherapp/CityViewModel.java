@@ -30,6 +30,10 @@ public class CityViewModel extends AndroidViewModel {
         myRepository.deleteCity(city);
     }
 
+    public void deleteAllCities() {
+        myRepository.deleteAllCities();
+    }
+
     List<City> getListCities() {
         return myRepository.getListCities();
     }

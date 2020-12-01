@@ -163,6 +163,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.clear_favorites) {
+            Toast.makeText(this, "Your Favorites have been cleared!", Toast.LENGTH_LONG).show();
+
+            MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
+            SubMenu subMenu = favoriteLocItem.getSubMenu();
+
+            myCityViewModel.deleteAllCities();
+            favoritesButton.setChecked(false);
+            myCities.clear();
+            subMenu.clear();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void searchWeather(View view) {
         String queryString = myWeatherInput.getText().toString();
 
