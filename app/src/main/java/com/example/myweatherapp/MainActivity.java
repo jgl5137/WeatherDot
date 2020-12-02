@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
             }
         });
-        myCurrentTempDisplay = findViewById(R.id.current_Temp_Display);
+        myCurrentTempDisplay = findViewById(R.id.current_temp_display);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
