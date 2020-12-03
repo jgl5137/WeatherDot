@@ -276,15 +276,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 JSONArray weatherDescObject = jsonObject.getJSONArray("weather");
                 JSONObject mainObject = jsonObject.getJSONObject("main");
                 int i = 0;
-                String day = null;
+                String time = null;
                 String condition = null;
                 String temp_Current = null;
-                String temp_High = null;
-                String temp_Low = null;
                 double coord_lat = 0;
                 double coord_lon = 0;
 
                 try{
+                    time =
                     temp_Current = "" + mainObject.getInt("temp") + "\u2109";
                     coord_lat = coordObject.getDouble("lat");
                     coord_lon = coordObject.getDouble("lon");
@@ -356,6 +355,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String formattedDate = sdf.format(date);
         return formattedDate;
     }
+
+//    public String getTime(long dt, long timezone) {
+////        Date time = new java.util.Date(dt*1000L);
+////        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a, z");
+////        sdf.setTimeZone(java.util.TimeZone.getTimeZone(String.valueOf(timezone)));
+////        String formattedTime = sdf.format(time);
+////        return formattedTime;
+//    }
 
     public static String capitalize(String input) {
         String[] words = input.toLowerCase().split(" ");
