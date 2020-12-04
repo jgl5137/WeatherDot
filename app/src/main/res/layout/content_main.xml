@@ -8,16 +8,6 @@
     android:background="?attr/colorPrimary"
     app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
-    <TextView
-        android:id="@+id/current_time_display"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="32sp"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintTop_toTopOf="@id/current_weather_display"
-        app:layout_constraintStart_toStartOf="@id/current_weather_display"
-        app:layout_constraintEnd_toEndOf="@id/current_weather_display" />
-
     <ImageView
         android:id="@+id/current_weather_display"
         android:layout_width="match_parent"
@@ -27,6 +17,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/recyclerview" />
+
+    <TextView
+        android:id="@+id/current_time_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintTop_toTopOf="@id/current_weather_display"
+        app:layout_constraintStart_toStartOf="@id/current_weather_display"
+        app:layout_constraintEnd_toEndOf="@id/current_weather_display" />
 
     <ImageView
         android:id="@+id/current_condition_icon"

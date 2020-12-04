@@ -45,12 +45,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<String> {
     private CityViewModel myCityViewModel;
     private RecyclerView myRecyclerView;
     private WeatherListAdapter myAdapter;
     private EditText myWeatherInput;
+    private TextView myCurrentTimeDisplay;
     private TextView myCurrentTempDisplay;
     private ArrayList<Weather> myWeatherData;
     private NavigationView navigationView;
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
             }
         });
+        myCurrentTimeDisplay = findViewById(R.id.current_time_display);
         myCurrentTempDisplay = findViewById(R.id.current_temp_display);
 
         setSupportActionBar(toolbar);
@@ -185,6 +188,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             subMenu.clear();
             return true;
         }
+
+        if(id == R.id.clear_recent) {
+            Toast.makeText(this, "Recent Locations have been cleared!", Toast.LENGTH_LONG).show();
+
+            MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
+            SubMenu subMenu = recentLocItem.getSubMenu();
+
+            recentLocList.clear();
+            subMenu.clear();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -281,9 +295,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String temp_Current = null;
                 double coord_lat = 0;
                 double coord_lon = 0;
+                long dt_current = jsonObject.getLong("dt");
+                int timezoneOffset = jsonObject.getInt("timezone");
 
                 try{
-                    time =
+                    time = getTime(dt_current, timezoneOffset);
                     temp_Current = "" + mainObject.getInt("temp") + "\u2109";
                     coord_lat = coordObject.getDouble("lat");
                     coord_lon = coordObject.getDouble("lon");
@@ -291,6 +307,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     e.printStackTrace();
                 }
                 if(temp_Current != null) {
+                    myCurrentTimeDisplay.setText("Most Recently: " + time);
                     myCurrentTempDisplay.setText(temp_Current);
                     searchDetailedWeather(coord_lat, coord_lon);
                 }
@@ -356,13 +373,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return formattedDate;
     }
 
-//    public String getTime(long dt, long timezone) {
-////        Date time = new java.util.Date(dt*1000L);
-////        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a, z");
-////        sdf.setTimeZone(java.util.TimeZone.getTimeZone(String.valueOf(timezone)));
-////        String formattedTime = sdf.format(time);
-////        return formattedTime;
-//    }
+    public String getTime(long dt, int timezoneOffset) {
+        timezoneOffset = (timezoneOffset * 1000);
+        String[] availableIDs = TimeZone.getAvailableIDs(timezoneOffset);
+
+        Date time = new java.util.Date(dt*1000L);
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a, z");
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone(availableIDs[0]));
+        String formattedTime = sdf.format(time);
+        return formattedTime;
+    }
 
     public static String capitalize(String input) {
         String[] words = input.toLowerCase().split(" ");
