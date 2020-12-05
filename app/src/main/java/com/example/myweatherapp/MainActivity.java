@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.LiveData;
@@ -29,6 +30,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -39,6 +41,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,13 +55,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView myRecyclerView;
     private WeatherListAdapter myAdapter;
     private EditText myWeatherInput;
+    private ImageView myCurrentWeatherDisplay;
     private TextView myCurrentTimeDisplay;
     private TextView myCurrentTempDisplay;
     private ArrayList<Weather> myWeatherData;
     private NavigationView navigationView;
     private ArrayList<String> recentLocList;
     private ToggleButton favoritesButton;
-    private int menuItemOrder;
     private ArrayList<City> myCities;
     private Set<String> favCitiesSet;
 
@@ -85,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
             }
         });
+        myCurrentWeatherDisplay = findViewById(R.id.current_weather_display);
+        myCurrentWeatherDisplay.setVisibility(View.INVISIBLE);
         myCurrentTimeDisplay = findViewById(R.id.current_time_display);
         myCurrentTempDisplay = findViewById(R.id.current_temp_display);
 
@@ -104,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         recentLocList = new ArrayList<String>();
-
-        menuItemOrder = 800;
 
         if(LoaderManager.getInstance(this).getLoader(1) != null) {
             LoaderManager.getInstance(this).initLoader(1, null, this);
@@ -281,9 +284,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(!recentLocList.contains(jsonObject.getString("name"))) {
                     MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
                     SubMenu subMenu = recentLocItem.getSubMenu();
-                    subMenu.add(Menu.NONE, Menu.NONE, menuItemOrder, jsonObject.getString("name"));
+                    subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), jsonObject.getString("name"));
                     recentLocList.add(jsonObject.getString("name"));
-                    menuItemOrder -= 5;
                 }
 
                 JSONObject coordObject = jsonObject.getJSONObject("coord");
@@ -300,6 +302,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 try{
                     time = getTime(dt_current, timezoneOffset);
+                    if(isItDaytime(time)) {
+                        myCurrentWeatherDisplay.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_day));
+                        myCurrentWeatherDisplay.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        myCurrentWeatherDisplay.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_night));
+                        myCurrentWeatherDisplay.setVisibility(View.VISIBLE);
+                    }
                     temp_Current = "" + mainObject.getInt("temp") + "\u2109";
                     coord_lat = coordObject.getDouble("lat");
                     coord_lon = coordObject.getDouble("lon");
@@ -382,6 +392,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sdf.setTimeZone(java.util.TimeZone.getTimeZone(availableIDs[0]));
         String formattedTime = sdf.format(time);
         return formattedTime;
+    }
+
+    public static boolean isItDaytime(String currentTime) {
+
+        System.out.println(currentTime);
+        boolean isDaytime = false;
+        try {
+            Date time1 = new SimpleDateFormat("HH:mm").parse("07:00");
+
+            Date time2 = new SimpleDateFormat("HH:mm").parse("19:00");
+
+            Date timeCurrent = new SimpleDateFormat("h:mm a").parse(currentTime);
+
+            if(timeCurrent.after(time1) && timeCurrent.before(time2)) {
+                isDaytime = true;
+            }
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return isDaytime;
     }
 
     public static String capitalize(String input) {
