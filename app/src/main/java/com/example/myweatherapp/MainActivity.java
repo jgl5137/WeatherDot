@@ -8,7 +8,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
@@ -35,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
@@ -55,9 +55,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView myRecyclerView;
     private WeatherListAdapter myAdapter;
     private EditText myWeatherInput;
-    private ImageView myCurrentWeatherDisplay;
-    private TextView myCurrentTimeDisplay;
-    private TextView myCurrentTempDisplay;
+    private ImageView myWeatherBackground;
+    private TextView myCurrentTimeText;
+    private ImageView myCurrentConditionIcon;
+    private TextView myCurrentTempText;
+    private TextView myCurrentConditionText;
     private ArrayList<Weather> myWeatherData;
     private NavigationView navigationView;
     private ArrayList<String> recentLocList;
@@ -88,10 +90,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
             }
         });
-        myCurrentWeatherDisplay = findViewById(R.id.current_weather_display);
-        myCurrentWeatherDisplay.setVisibility(View.INVISIBLE);
-        myCurrentTimeDisplay = findViewById(R.id.current_time_display);
-        myCurrentTempDisplay = findViewById(R.id.current_temp_display);
+        myWeatherBackground = findViewById(R.id.current_weather_background);
+        myWeatherBackground.setVisibility(View.INVISIBLE);
+        myCurrentTimeText = findViewById(R.id.current_time_text);
+        myCurrentConditionIcon = findViewById(R.id.current_condition_icon);
+        myCurrentTempText = findViewById(R.id.current_temp_text);
+        myCurrentConditionText = findViewById(R.id.current_condition_text);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -291,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 JSONObject coordObject = jsonObject.getJSONObject("coord");
                 JSONArray weatherDescObject = jsonObject.getJSONArray("weather");
                 JSONObject mainObject = jsonObject.getJSONObject("main");
-                int i = 0;
                 String time = null;
                 String condition = null;
                 String temp_Current = null;
@@ -299,26 +302,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 double coord_lon = 0;
                 long dt_current = jsonObject.getLong("dt");
                 int timezoneOffset = jsonObject.getInt("timezone");
+                String icon = null;
 
                 try{
                     time = getTime(dt_current, timezoneOffset);
                     if(isItDaytime(time)) {
-                        myCurrentWeatherDisplay.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_day));
-                        myCurrentWeatherDisplay.setVisibility(View.VISIBLE);
+                        myWeatherBackground.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_day));
                     }
                     else {
-                        myCurrentWeatherDisplay.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_night));
-                        myCurrentWeatherDisplay.setVisibility(View.VISIBLE);
+                        myWeatherBackground.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_night));
                     }
+                    myWeatherBackground.setVisibility(View.VISIBLE);
+
+                    icon = weatherDescObject.getJSONObject(0).getString("icon");
                     temp_Current = "" + mainObject.getInt("temp") + "\u2109";
+                    condition = capitalize(weatherDescObject.getJSONObject(0).getString("description"));
                     coord_lat = coordObject.getDouble("lat");
                     coord_lon = coordObject.getDouble("lon");
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
                 if(temp_Current != null) {
-                    myCurrentTimeDisplay.setText("Most Recently: " + time);
-                    myCurrentTempDisplay.setText(temp_Current);
+                    myCurrentTimeText.setText("Most Recently: " + time);
+                    String iconURL = "https://openweathermap.org/img/wn/" + icon + ".png";
+                    Glide.with(this).load(iconURL).override(250, 250).into(myCurrentConditionIcon);
+                    myCurrentTempText.setText(temp_Current);
+                    myCurrentConditionText.setText(condition);
                     searchDetailedWeather(coord_lat, coord_lon);
                 }
             }
@@ -395,13 +404,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public static boolean isItDaytime(String currentTime) {
-
-        System.out.println(currentTime);
         boolean isDaytime = false;
         try {
-            Date time1 = new SimpleDateFormat("HH:mm").parse("07:00");
+            Date time1 = new SimpleDateFormat("HH:mm").parse("06:00");
 
-            Date time2 = new SimpleDateFormat("HH:mm").parse("19:00");
+            Date time2 = new SimpleDateFormat("HH:mm").parse("18:00");
 
             Date timeCurrent = new SimpleDateFormat("h:mm a").parse(currentTime);
 
