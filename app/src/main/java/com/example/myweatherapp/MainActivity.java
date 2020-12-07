@@ -160,6 +160,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return true;
         }
 
+        if(item.getItemId() == R.id.nav_settings) {
+            Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+
         if(item.getItemId() == R.id.nav_send_feedback) {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setData(Uri.parse("mailto:"));
@@ -167,9 +173,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             intent.putExtra(Intent.EXTRA_SUBJECT, "Weather App Feedback");
             if(intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(intent);
+                return true;
             }
         }
-
         return false;
     }
 
