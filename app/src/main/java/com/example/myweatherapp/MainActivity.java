@@ -143,19 +143,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
-        if(item.getItemId() == Menu.NONE) {
-            drawer.closeDrawer(GravityCompat.START);
-            myWeatherInput.setText(item.getTitle());
-            favoritesButton.setEnabled(true);
-            searchWeather(myWeatherInput);
-            return true;
-        }
-
         if(item.getItemId() == Menu.FIRST) {
             drawer.closeDrawer(GravityCompat.START);
             myWeatherInput.setText(item.getTitle());
             favoritesButton.setEnabled(true);
             favoritesButton.setChecked(true);
+            searchWeather(myWeatherInput);
+            return true;
+        }
+
+        if(item.getItemId() == Menu.NONE) {
+            drawer.closeDrawer(GravityCompat.START);
+            myWeatherInput.setText(item.getTitle());
+            favoritesButton.setEnabled(true);
             searchWeather(myWeatherInput);
             return true;
         }
