@@ -24,15 +24,23 @@ public class NetworkUtils {
     private static final String LON = "lon";
     private static final String EXCLUDE = "exclude";
 
-    static String getCurrentWeather(String queryString) {
+    static String getCurrentWeather(String queryString, String measurementType) {
         HttpsURLConnection urlConnection = null;
         BufferedReader reader = null;
         String currentWeatherJSONString = null;
+        String measureType = "";
+
+        if(measurementType.equalsIgnoreCase("celsius")) {
+            measureType = "metric";
+        }
+        else {
+            measureType = "imperial";
+        }
 
         try{
             Uri builtURI = Uri.parse(CURRENT_OPEN_WEATHER_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, queryString)
-                    .appendQueryParameter(UNITS, "imperial")
+                    .appendQueryParameter(UNITS, measureType)
                     .appendQueryParameter(LANG, "en")
                     .appendQueryParameter(APP_ID, API_KEY)
                     .build();
@@ -83,17 +91,25 @@ public class NetworkUtils {
         return currentWeatherJSONString;
     }
 
-    static String getDetailedWeather(double queryLat, double queryLon) {
+    static String getDetailedWeather(double queryLat, double queryLon, String measurementType) {
         HttpsURLConnection urlConnection = null;
         BufferedReader reader = null;
         String detailedWeatherJSONString = null;
+        String measureType = "";
+
+        if(measurementType.equalsIgnoreCase("celsius")) {
+            measureType = "metric";
+        }
+        else {
+            measureType = "imperial";
+        }
 
         try{
             Uri builtURI = Uri.parse(DETAILED_OPEN_WEATHER_URL).buildUpon()
                     .appendQueryParameter(LAT, String.valueOf(queryLat))
                     .appendQueryParameter(LON, String.valueOf(queryLon))
                     .appendQueryParameter(EXCLUDE, "current,minutely,hourly,alerts")
-                    .appendQueryParameter(UNITS, "imperial")
+                    .appendQueryParameter(UNITS, measureType)
                     .appendQueryParameter(LANG, "en")
                     .appendQueryParameter(APP_ID, API_KEY)
                     .build();

@@ -10,11 +10,13 @@ public class DetailedWeatherLoader extends AsyncTaskLoader<String> {
 
     private double myQueryLat;
     private double myQueryLon;
+    private String myMeasurementType;
 
-    public DetailedWeatherLoader(@NonNull Context context, double lat, double lon) {
+    public DetailedWeatherLoader(@NonNull Context context, double lat, double lon, String measurementType) {
         super(context);
         myQueryLat = lat;
         myQueryLon = lon;
+        myMeasurementType = measurementType;
     }
 
     @Override
@@ -26,6 +28,6 @@ public class DetailedWeatherLoader extends AsyncTaskLoader<String> {
     @Nullable
     @Override
     public String loadInBackground() {
-        return NetworkUtils.getDetailedWeather(myQueryLat, myQueryLon);
+        return NetworkUtils.getDetailedWeather(myQueryLat, myQueryLon, myMeasurementType);
     }
 }

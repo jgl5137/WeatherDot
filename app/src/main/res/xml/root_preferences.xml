@@ -5,7 +5,7 @@
             app:defaultValue="fahrenheit"
             app:entries="@array/measurement_entries"
             app:entryValues="@array/measurement_values"
-            app:key="fahrToCel"
+            app:key="tempMeasure"
             app:title="Measurement Preference"
             app:useSimpleSummaryProvider="true"/>
     </PreferenceCategory>

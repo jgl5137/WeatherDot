@@ -12,11 +12,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ToggleButton favoritesButton;
     private ArrayList<City> myCities;
     private Set<String> favCitiesSet;
+    private String measurementPref;
 
     private static final int CURRENT_WEATHER_LOADER = 1;
     private static final int DETAILED_WEATHER_LOADER = 2;
@@ -114,11 +117,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         recentLocList = new ArrayList<String>();
 
-        if(LoaderManager.getInstance(this).getLoader(1) != null) {
-            LoaderManager.getInstance(this).initLoader(1, null, this);
+        if(LoaderManager.getInstance(this).getLoader(CURRENT_WEATHER_LOADER) != null) {
+            LoaderManager.getInstance(this).initLoader(CURRENT_WEATHER_LOADER, null, this);
         }
-        if(LoaderManager.getInstance(this).getLoader(2) != null) {
-            LoaderManager.getInstance(this).initLoader(2, null, this);
+        if(LoaderManager.getInstance(this).getLoader(DETAILED_WEATHER_LOADER) != null) {
+            LoaderManager.getInstance(this).initLoader(DETAILED_WEATHER_LOADER, null, this);
         }
 
         myCityViewModel = ViewModelProviders.of(this).get(CityViewModel.class);
@@ -137,6 +140,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         createInitialFavorites(myCities);
 
         favCitiesSet = new HashSet<String>();
+
+        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        measurementPref = sharedPref.getString(SettingsActivity.KEY_PREF_MEASUREMENT, "fahrenheit");
+
+        Toast.makeText(this, measurementPref, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -260,13 +271,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @NonNull
     @Override
     public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
+        String measurementType = "";
+
         if(id == CURRENT_WEATHER_LOADER) {
             String queryString = "";
 
             if(args != null) {
                 queryString =  args.getString("queryString");
+                measurementType = measurementPref;
             }
-            return new CurrentWeatherLoader(this, queryString);
+            return new CurrentWeatherLoader(this, queryString, measurementType);
         }
         if(id == DETAILED_WEATHER_LOADER) {
             double queryLat = 0;
@@ -275,8 +289,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(args != null) {
                 queryLat = args.getDouble("latitude");
                 queryLon = args.getDouble("longitude");
+                measurementType = measurementPref;
             }
-            return new DetailedWeatherLoader(this, queryLat, queryLon);
+            return new DetailedWeatherLoader(this, queryLat, queryLon, measurementType);
         }
         return null;
     }
@@ -321,7 +336,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     myWeatherBackground.setVisibility(View.VISIBLE);
 
                     icon = weatherDescObject.getJSONObject(0).getString("icon");
-                    temp_Current = "" + mainObject.getInt("temp") + "\u2109";
+
+                    if(measurementPref.equalsIgnoreCase("celsius")) {
+                        temp_Current = "" + mainObject.getInt("temp") + "\u2103";
+                    }
+                    else {
+                        temp_Current = "" + mainObject.getInt("temp") + "\u2109";
+                    }
+
                     condition = capitalize(weatherDescObject.getJSONObject(0).getString("description"));
                     coord_lat = coordObject.getDouble("lat");
                     coord_lon = coordObject.getDouble("lon");
@@ -366,7 +388,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         day = getDate(dt, timezone);
                         icon = weatherArrObject.getString("icon");
                         cond = capitalize(weatherArrObject.getString("description"));
-                        temps = "High: " + temp.getInt("max") + "\u2109 \n" + "Low: " + temp.getInt("min") + "\u2109";
+
+                        if(measurementPref.equalsIgnoreCase("celsius")) {
+                            temps = "High: " + temp.getInt("max") + "\u2103 \n" + "Low: " + temp.getInt("min") + "\u2103";
+                        }
+                        else {
+                            temps = "High: " + temp.getInt("max") + "\u2109 \n" + "Low: " + temp.getInt("min") + "\u2109";
+                        }
+
                         myWeatherData.add(new Weather(day, icon, cond, temps));
                     }
                     catch (Exception e) {
@@ -388,6 +417,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onLoaderReset(@NonNull Loader<String> loader) {
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LoaderManager.getInstance(this).destroyLoader(CURRENT_WEATHER_LOADER);
+        LoaderManager.getInstance(this).destroyLoader(DETAILED_WEATHER_LOADER);
     }
 
     public String getDate(long dt, String timezone) {

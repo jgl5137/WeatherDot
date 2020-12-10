@@ -9,10 +9,12 @@ import androidx.loader.content.AsyncTaskLoader;
 public class CurrentWeatherLoader extends AsyncTaskLoader<String> {
 
     private String myWeatherQueryString;
+    private String myMeasurementType;
 
-    public CurrentWeatherLoader(@NonNull Context context, String queryString) {
+    public CurrentWeatherLoader(@NonNull Context context, String queryString, String measurementType) {
         super(context);
         myWeatherQueryString = queryString;
+        myMeasurementType = measurementType;
     }
 
     @Override
@@ -24,6 +26,6 @@ public class CurrentWeatherLoader extends AsyncTaskLoader<String> {
     @Nullable
     @Override
     public String loadInBackground() {
-        return NetworkUtils.getCurrentWeather(myWeatherQueryString);
+        return NetworkUtils.getCurrentWeather(myWeatherQueryString, myMeasurementType);
     }
 }
