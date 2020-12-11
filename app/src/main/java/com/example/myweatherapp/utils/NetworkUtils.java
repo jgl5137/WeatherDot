@@ -1,4 +1,4 @@
-package com.example.myweatherapp;
+package com.example.myweatherapp.utils;
 
 import android.net.Uri;
 import android.util.Log;
@@ -24,11 +24,12 @@ public class NetworkUtils {
     private static final String LON = "lon";
     private static final String EXCLUDE = "exclude";
 
-    static String getCurrentWeather(String queryString, String measurementType) {
+    public static String getCurrentWeather(String queryString, String measurementType, String language) {
         HttpsURLConnection urlConnection = null;
         BufferedReader reader = null;
         String currentWeatherJSONString = null;
         String measureType = "";
+        String chosenLanguage = "";
 
         if(measurementType.equalsIgnoreCase("celsius")) {
             measureType = "metric";
@@ -37,11 +38,37 @@ public class NetworkUtils {
             measureType = "imperial";
         }
 
+        switch (language) {
+            case "en":
+                chosenLanguage = "en";
+                break;
+            case "es":
+                chosenLanguage = "es";
+                break;
+            case "fr":
+                chosenLanguage = "fr";
+                break;
+            case "de":
+                chosenLanguage = "de";
+                break;
+            case "ar":
+                chosenLanguage = "ar";
+                break;
+            case "zh_cn":
+                chosenLanguage = "zh_cn";
+                break;
+            case "ja":
+                chosenLanguage = "ja";
+                break;
+            case "kr":
+                chosenLanguage = "kr";
+        }
+
         try{
             Uri builtURI = Uri.parse(CURRENT_OPEN_WEATHER_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, queryString)
                     .appendQueryParameter(UNITS, measureType)
-                    .appendQueryParameter(LANG, "en")
+                    .appendQueryParameter(LANG, chosenLanguage)
                     .appendQueryParameter(APP_ID, API_KEY)
                     .build();
 
@@ -91,11 +118,12 @@ public class NetworkUtils {
         return currentWeatherJSONString;
     }
 
-    static String getDetailedWeather(double queryLat, double queryLon, String measurementType) {
+    public static String getDetailedWeather(double queryLat, double queryLon, String measurementType, String language) {
         HttpsURLConnection urlConnection = null;
         BufferedReader reader = null;
         String detailedWeatherJSONString = null;
         String measureType = "";
+        String chosenLanguage = "";
 
         if(measurementType.equalsIgnoreCase("celsius")) {
             measureType = "metric";
@@ -104,13 +132,39 @@ public class NetworkUtils {
             measureType = "imperial";
         }
 
+        switch (language) {
+            case "en":
+                chosenLanguage = "en";
+                break;
+            case "es":
+                chosenLanguage = "es";
+                break;
+            case "fr":
+                chosenLanguage = "fr";
+                break;
+            case "de":
+                chosenLanguage = "de";
+                break;
+            case "ar":
+                chosenLanguage = "ar";
+                break;
+            case "zh_cn":
+                chosenLanguage = "zh_cn";
+                break;
+            case "ja":
+                chosenLanguage = "ja";
+                break;
+            case "kr":
+                chosenLanguage = "kr";
+        }
+
         try{
             Uri builtURI = Uri.parse(DETAILED_OPEN_WEATHER_URL).buildUpon()
                     .appendQueryParameter(LAT, String.valueOf(queryLat))
                     .appendQueryParameter(LON, String.valueOf(queryLon))
                     .appendQueryParameter(EXCLUDE, "current,minutely,hourly,alerts")
                     .appendQueryParameter(UNITS, measureType)
-                    .appendQueryParameter(LANG, "en")
+                    .appendQueryParameter(LANG, chosenLanguage)
                     .appendQueryParameter(APP_ID, API_KEY)
                     .build();
 

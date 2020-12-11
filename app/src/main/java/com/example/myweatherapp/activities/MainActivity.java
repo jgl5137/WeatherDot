@@ -1,4 +1,4 @@
-package com.example.myweatherapp;
+package com.example.myweatherapp.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +37,13 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
+import com.example.myweatherapp.R;
+import com.example.myweatherapp.adapters.WeatherListAdapter;
+import com.example.myweatherapp.database.City;
+import com.example.myweatherapp.database.CityViewModel;
+import com.example.myweatherapp.loaders.CurrentWeatherLoader;
+import com.example.myweatherapp.loaders.DetailedWeatherLoader;
+import com.example.myweatherapp.objects.Weather;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
@@ -69,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<City> myCities;
     private Set<String> favCitiesSet;
     private String measurementPref;
+    private String languagePref;
 
     private static final int CURRENT_WEATHER_LOADER = 1;
     private static final int DETAILED_WEATHER_LOADER = 2;
@@ -126,8 +134,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         myCityViewModel = ViewModelProviders.of(this).get(CityViewModel.class);
 
-//        getApplicationContext().deleteDatabase("city_database");
-
         myCityViewModel.getAllCities().observe(this, new Observer<List<City>>() {
             @Override
             public void onChanged(List<City> cities) {
@@ -147,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         measurementPref = sharedPref.getString(SettingsActivity.KEY_PREF_MEASUREMENT, "fahrenheit");
 
-        Toast.makeText(this, measurementPref, Toast.LENGTH_SHORT).show();
+        languagePref = sharedPref.getString(SettingsActivity.KEY_PREF_LANGUAGE, "en");
     }
 
     @Override
@@ -272,6 +278,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
         String measurementType = "";
+        String chosenLanguage = "";
 
         if(id == CURRENT_WEATHER_LOADER) {
             String queryString = "";
@@ -279,8 +286,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(args != null) {
                 queryString =  args.getString("queryString");
                 measurementType = measurementPref;
+                chosenLanguage = languagePref;
             }
-            return new CurrentWeatherLoader(this, queryString, measurementType);
+            return new CurrentWeatherLoader(this, queryString, measurementType, chosenLanguage);
         }
         if(id == DETAILED_WEATHER_LOADER) {
             double queryLat = 0;
@@ -290,8 +298,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 queryLat = args.getDouble("latitude");
                 queryLon = args.getDouble("longitude");
                 measurementType = measurementPref;
+                chosenLanguage = languagePref;
             }
-            return new DetailedWeatherLoader(this, queryLat, queryLon, measurementType);
+            return new DetailedWeatherLoader(this, queryLat, queryLon, measurementType, chosenLanguage);
         }
         return null;
     }
@@ -309,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(!recentLocList.contains(jsonObject.getString("name"))) {
                     MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
                     SubMenu subMenu = recentLocItem.getSubMenu();
-                    subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), jsonObject.getString("name"));
+                    subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), capitalize(jsonObject.getString("name")));
                     recentLocList.add(jsonObject.getString("name"));
                 }
 
@@ -424,6 +433,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onStop();
         LoaderManager.getInstance(this).destroyLoader(CURRENT_WEATHER_LOADER);
         LoaderManager.getInstance(this).destroyLoader(DETAILED_WEATHER_LOADER);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Toast.makeText(this, "If any settings were changed, please restart the app.", Toast.LENGTH_LONG).show();
     }
 
     public String getDate(long dt, String timezone) {

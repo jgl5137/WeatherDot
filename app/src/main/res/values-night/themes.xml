@@ -15,6 +15,8 @@
         <!-- Customize your theme here. -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:textColorSecondary">@color/white</item>
+        <item name="alertDialogTheme">@style/PrefDialogAlert</item>
+        <item name="preferenceTheme">@style/PreferenceTheme</item>
     </style>
 
     <style name="Theme.MyWeatherApp.NoActionBar">
@@ -38,5 +40,16 @@
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlActivated">@color/orange_500</item>
         <item name="colorControlHighlight">@color/orange_500</item>
+    </style>
+
+    <style name="PrefDialogAlert" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="colorPrimary">@color/orange_500</item>
+        <item name="colorPrimaryDark">@color/orange_dark</item>
+        <item name="colorAccent">@color/orange_500</item>
+        <item name="android:background">@color/blue_grey_800</item>
+    </style>
+
+    <style name="PreferenceTheme" parent="PreferenceThemeOverlay">
+        <item name="android:textColor">@color/white</item>
     </style>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.myweatherapp;
+package com.example.myweatherapp.loaders;
 
 import android.content.Context;
 
@@ -6,15 +6,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.loader.content.AsyncTaskLoader;
 
+import com.example.myweatherapp.utils.NetworkUtils;
+
 public class CurrentWeatherLoader extends AsyncTaskLoader<String> {
 
     private String myWeatherQueryString;
     private String myMeasurementType;
+    private String myLanguage;
 
-    public CurrentWeatherLoader(@NonNull Context context, String queryString, String measurementType) {
+    public CurrentWeatherLoader(@NonNull Context context, String queryString, String measurementType, String language) {
         super(context);
         myWeatherQueryString = queryString;
         myMeasurementType = measurementType;
+        myLanguage = language;
     }
 
     @Override
@@ -26,6 +30,6 @@ public class CurrentWeatherLoader extends AsyncTaskLoader<String> {
     @Nullable
     @Override
     public String loadInBackground() {
-        return NetworkUtils.getCurrentWeather(myWeatherQueryString, myMeasurementType);
+        return NetworkUtils.getCurrentWeather(myWeatherQueryString, myMeasurementType, myLanguage);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.myweatherapp;
+package com.example.myweatherapp.database;
 
 import android.app.Application;
 
@@ -18,7 +18,7 @@ public class CityViewModel extends AndroidViewModel {
         myAllCities = myRepository.getAllCities();
     }
 
-    LiveData<List<City>> getAllCities() {
+    public LiveData<List<City>> getAllCities() {
         return myAllCities;
     }
 
@@ -34,7 +34,7 @@ public class CityViewModel extends AndroidViewModel {
         myRepository.deleteAllCities();
     }
 
-    List<City> getListCities() {
+    public List<City> getListCities() {
         return myRepository.getListCities();
     }
 }

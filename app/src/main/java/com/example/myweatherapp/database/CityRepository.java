@@ -1,4 +1,4 @@
-package com.example.myweatherapp;
+package com.example.myweatherapp.database;
 
 import android.app.Application;
 import android.os.AsyncTask;

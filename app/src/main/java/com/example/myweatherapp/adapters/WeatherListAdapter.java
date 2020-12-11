@@ -1,4 +1,4 @@
-package com.example.myweatherapp;
+package com.example.myweatherapp.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,9 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.myweatherapp.R;
+import com.example.myweatherapp.objects.Weather;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.WeatherViewHolder> {
 
@@ -21,7 +22,7 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
     private ArrayList<Weather> myWeather;
     private Context myContext;
 
-    WeatherListAdapter(Context context, ArrayList<Weather> weatherData) {
+    public WeatherListAdapter(Context context, ArrayList<Weather> weatherData) {
         myInflater = LayoutInflater.from(context);
         this.myWeather = weatherData;
         this.myContext = context;

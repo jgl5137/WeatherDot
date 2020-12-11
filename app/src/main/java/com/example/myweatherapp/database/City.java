@@ -1,4 +1,4 @@
-package com.example.myweatherapp;
+package com.example.myweatherapp.database;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

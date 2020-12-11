@@ -1,4 +1,4 @@
-package com.example.myweatherapp;
+package com.example.myweatherapp.objects;
 
 public class Weather {
 

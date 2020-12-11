@@ -1,4 +1,4 @@
-package com.example.myweatherapp;
+package com.example.myweatherapp.activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -8,9 +8,12 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.example.myweatherapp.R;
+
 public class SettingsActivity extends AppCompatActivity {
 
     public static final String KEY_PREF_MEASUREMENT = "tempMeasure";
+    public static final String KEY_PREF_LANGUAGE = "lang";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
