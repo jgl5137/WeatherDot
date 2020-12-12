@@ -14,14 +14,23 @@ import javax.net.ssl.HttpsURLConnection;
 public class NetworkUtils {
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
     private static final String API_KEY = "e83f7c0a2b6d6c8316fea85fb334134c";
+    //Base URL for OpenWeather API
     private static final String CURRENT_OPEN_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?";
+    //Parameter for the search string.
     private static final String QUERY_PARAM = "q";
+    //Parameter that corresponds to temperature measurement type (Fahrenheit or Celsius).
     private static final String UNITS = "units";
+    //Parameter for the API Key
     private static final String APP_ID = "appid";
+    //Parameter that corresponds to the user's preferred language.
     private static final String LANG = "lang";
+    //Base URL for OpenWeather One Call API
     private static final String DETAILED_OPEN_WEATHER_URL = "https://api.openweathermap.org/data/2.5/onecall?";
+    //Required parameter for the One Call API (Latitude).
     private static final String LAT = "lat";
+    //Required parameter for the One Call API (Longitude).
     private static final String LON = "lon";
+    //Parameter that excludes certain types of data (ex. minutely, hourly, etc...).
     private static final String EXCLUDE = "exclude";
 
     public static String getCurrentWeather(String queryString, String measurementType, String language) {
@@ -31,6 +40,7 @@ public class NetworkUtils {
         String measureType = "";
         String chosenLanguage = "";
 
+        //Dependant on user's 'Measurement' setting.
         if(measurementType.equalsIgnoreCase("celsius")) {
             measureType = "metric";
         }
@@ -38,6 +48,7 @@ public class NetworkUtils {
             measureType = "imperial";
         }
 
+        //Dependant on user's 'Language' setting.
         switch (language) {
             case "en":
                 chosenLanguage = "en";
@@ -65,6 +76,7 @@ public class NetworkUtils {
         }
 
         try{
+            //Building the URL
             Uri builtURI = Uri.parse(CURRENT_OPEN_WEATHER_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, queryString)
                     .appendQueryParameter(UNITS, measureType)
@@ -78,31 +90,36 @@ public class NetworkUtils {
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
+            //Get the InputStream
             InputStream inputStream = urlConnection.getInputStream();
 
+            //Create a buffered reader from that input stream
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
+            //Use StringBuilder to hold the incoming response
             StringBuilder builder = new StringBuilder();
 
             String newLine;
-
             while ((newLine = reader.readLine()) != null) {
+                //Inputting the JSON into the StringBuilder.
                 builder.append(newLine);
-                builder.append("\n");
             }
 
             if(builder.length() == 0) {
+                //Stream was empty. No point in parsing.
                 return null;
             }
 
             currentWeatherJSONString = builder.toString();
 
+            //Read the API's output for debugging purposes.
             Log.d(LOG_TAG, currentWeatherJSONString);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
         finally {
+            //Shutting down the HTTPS connection and closing the BufferedReader
             if(urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -115,6 +132,7 @@ public class NetworkUtils {
                 }
             }
         }
+        //Sending the data back to the Main Activity.
         return currentWeatherJSONString;
     }
 
@@ -125,6 +143,7 @@ public class NetworkUtils {
         String measureType = "";
         String chosenLanguage = "";
 
+        //Dependant on user's 'Measurement' setting.
         if(measurementType.equalsIgnoreCase("celsius")) {
             measureType = "metric";
         }
@@ -132,6 +151,7 @@ public class NetworkUtils {
             measureType = "imperial";
         }
 
+        //Dependant on user's 'Language' setting.
         switch (language) {
             case "en":
                 chosenLanguage = "en";
@@ -159,6 +179,7 @@ public class NetworkUtils {
         }
 
         try{
+            //Building the URL
             Uri builtURI = Uri.parse(DETAILED_OPEN_WEATHER_URL).buildUpon()
                     .appendQueryParameter(LAT, String.valueOf(queryLat))
                     .appendQueryParameter(LON, String.valueOf(queryLon))
@@ -174,31 +195,35 @@ public class NetworkUtils {
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
+            //Get the InputStream
             InputStream inputStream = urlConnection.getInputStream();
 
+            //Create a buffered reader from that input stream
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
+            //Use a StringBuilder to hold the incoming response
             StringBuilder builder = new StringBuilder();
 
             String newLine;
-
             while((newLine = reader.readLine()) != null) {
                 builder.append(newLine);
-                builder.append("\n");
             }
 
             if(builder.length() == 0) {
+                //Stream was empty. No point in parsing.
                 return null;
             }
 
             detailedWeatherJSONString = builder.toString();
 
+            //Read the API's output for debugging purposes.
             Log.d(LOG_TAG, detailedWeatherJSONString);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
         finally {
+            //Shutting down the HTTPS connection and closing the BufferedReader
             if(urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -211,6 +236,7 @@ public class NetworkUtils {
                 }
             }
         }
+        //Sending the data back to the Main Activity.
         return detailedWeatherJSONString;
     }
 }

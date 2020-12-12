@@ -10,10 +10,12 @@ import com.example.myweatherapp.utils.NetworkUtils;
 
 public class CurrentWeatherLoader extends AsyncTaskLoader<String> {
 
+    //Member variables
     private String myWeatherQueryString;
     private String myMeasurementType;
     private String myLanguage;
 
+    //AsyncTaskLoader constructor
     public CurrentWeatherLoader(@NonNull Context context, String queryString, String measurementType, String language) {
         super(context);
         myWeatherQueryString = queryString;
