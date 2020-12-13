@@ -64,6 +64,9 @@ import java.util.TimeZone;
  * This class displays current and daily weather information from
  * whatever city the user chooses to search for.
  * The app utilizes the OpenWeather Weather API to fetch weather information.
+ * Currently, the user will have to be somewhat specific to which city
+ * they want to search for (ex. searching "Rome" will fetch data for Rome, New York and not Rome, Italy).
+ * In order to get Rome, Italy the user will have to type in "Rome,IT" into the input field.
  * Cities that are deemed to be Favorites of the user are saved in a Room database.
  * Users can 'favorite' a city by searching for it and tapping the 'Heart' icon
  * and 'un-favorite' a city by tapping the icon again.
@@ -107,6 +110,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int CURRENT_WEATHER_LOADER = 1;
     private static final int DETAILED_WEATHER_LOADER = 2;
 
+    /**
+     * MainActivity's onCreate lifecycle state.
+     * @param savedInstanceState Any instance state data that is saved.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //Determines what the 'Search' button on the keyboard does.
                 if(actionId == EditorInfo.IME_ACTION_SEARCH) {
                     //Tapping the button initiates the weather query and enables the favorites button (Heart icon).
-                    searchWeather(textView);
+                    searchCurrentWeather(textView);
                     textView.clearFocus();
                     favoritesButton.setEnabled(true);
                     favoritesButton.setChecked(false);
@@ -194,7 +201,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         languagePref = sharedPref.getString(SettingsActivity.KEY_PREF_LANGUAGE, "en");
     }
 
-    //Determines the actions of tapping their respective Navigation Drawer items.
+    /**
+     * Determines the actions of tapping their respective Navigation Drawer items.
+     * @param item The tapped menu item.
+     * @return A boolean that displays the item as the selected item.
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -205,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             myWeatherInput.setText(item.getTitle());
             favoritesButton.setEnabled(true);
             favoritesButton.setChecked(true);
-            searchWeather(myWeatherInput);
+            searchCurrentWeather(myWeatherInput);
             return true;
         }
 
@@ -214,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
             myWeatherInput.setText(item.getTitle());
             favoritesButton.setEnabled(true);
-            searchWeather(myWeatherInput);
+            searchCurrentWeather(myWeatherInput);
             return true;
         }
 
@@ -242,6 +253,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
+    /**
+     * Required method that determines the actions when the option menu is created.
+     * @param menu The respective options menu.
+     * @return A boolean that determines if the menu is displayed or not.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Inflate the Options menu.
@@ -249,7 +265,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    //Determines the actions of tapping their respective Option menu items.
+    /**
+     * Method that determines the actions of tapping their respective Option menu items.
+     * @param item The tapped menu item.
+     * @return A boolean that is consumed in this options menu (true) or forwarded to another event (false).
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -291,9 +311,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Method that initiates the search for current Weather using OpenWeather API.
-     * @param view
+     * @param view The input field where the user types in a city name.
      */
-    public void searchWeather(View view) {
+    public void searchCurrentWeather(View view) {
         //Get the search string from the input field.
         String queryString = myWeatherInput.getText().toString();
 
@@ -331,10 +351,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Method that initiates the search for daily Weather using OpenWeather One Call API.
-     * @param lat
-     * @param lon
+     * @param lat The latitude of the city that is being searched for.
+     * @param lon The longitude of the city that is being searched for.
      */
-    public void searchDetailedWeather(double lat, double lon) {
+    public void searchDailyWeather(double lat, double lon) {
         //Checks the network connection of the device.
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = null;
@@ -351,13 +371,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * Required method for determining what the AsyncTaskLoader does when first created.
+     * @param id The ID of the respective AsyncTaskLoader that was initialized.
+     * @param args Any additional pieces of information that is needed to start the work of the AsyncTaskLoader.
+     * @return The respective AsyncTaskLoader object.
+     */
     @NonNull
     @Override
     public Loader<String> onCreateLoader(int id, @Nullable Bundle args) {
+        //Holder variables that will contain the user's preferences from the SettingsActivity.
         String measurementType = "";
         String chosenLanguage = "";
 
         if(id == CURRENT_WEATHER_LOADER) {
+            //The name of the city that is being searched for.
             String queryString = "";
 
             if(args != null) {
@@ -368,6 +396,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return new CurrentWeatherLoader(this, queryString, measurementType, chosenLanguage);
         }
         if(id == DETAILED_WEATHER_LOADER) {
+            //The latitude and longitude of the city that is being searched for.
             double queryLat = 0;
             double queryLon = 0;
 
@@ -382,6 +411,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return null;
     }
 
+    /**
+     * Required method for deciding what happens to the data fetched from the API call.
+     * The JSON response is nit-picked in order to display only the wanted information.
+     * @param loader The respective AsyncTaskLoader that was initialized.
+     * @param data The JSON response from the API.
+     */
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
         //Shows Toast if there is no data to receive due to incorrect spelling of city name.
@@ -459,7 +494,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     myCurrentTempText.setText(temp_Current);
                     myCurrentConditionText.setText(condition);
                     //Using the latitude & longitude gathered from this first API call, the daily Weather search is initiated.
-                    searchDetailedWeather(coord_lat, coord_lon);
+                    searchDailyWeather(coord_lat, coord_lon);
                 }
             }
             catch (JSONException e) {
@@ -532,11 +567,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * Required method that isn't used.
+     * @param loader The respective AsyncTaskLoader that was initialized.
+     */
     @Override
     public void onLoaderReset(@NonNull Loader<String> loader) {
 
     }
 
+    /**
+     * The MainActivity's onStop lifecycle state.
+     */
     @Override
     protected void onStop() {
         //On Activity Stop, both AsyncTaskLoaders will be destroyed
@@ -546,6 +588,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         LoaderManager.getInstance(this).destroyLoader(DETAILED_WEATHER_LOADER);
     }
 
+    /**
+     * The MainActivity's onStop lifecycle state.
+     */
     @Override
     protected void onRestart() {
         //On Activity Restart, a Toast will appear to the user to notify them that
@@ -559,9 +604,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * readable date string to be displayed.
      * Pattern "EEEE, MMM d" outputs as "dayOfTheWeek, abbreviated month, numberOfDayInMonth (#)",
      * which is then converted to a different language depending on the Locale used.
-     * @param dt
-     * @param timezone
-     * @return
+     * @param dt Time in seconds since 01-01-1970 which gets converted to current time.
+     * @param timezone A String that contains the name of the timezone.
+     * @return A String that is formatted as a readable date.
      */
     public String getDate(long dt, String timezone) {
         Date date = new java.util.Date(dt*1000L);
@@ -577,9 +622,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * The timezone offset is explicitly used to get the correct timezone that the city is based in.
      * Pattern "h:mm a, z" outputs as "hour:minutes AM/PM, timezone",
      * which is then converted to a different language depending on the Locale used.
-     * @param dt
-     * @param timezoneOffset
-     * @return
+     * @param dt Time in seconds since 01-01-1970 which gets converted to current time.
+     * @param timezoneOffset Time in seconds that represents the positive or negative offset from the UTC timezone.
+     * @return A String that is formatted as a readable time statement.
      */
     public String getTime(long dt, int timezoneOffset) {
         timezoneOffset = (timezoneOffset * 1000);
@@ -592,6 +637,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return formattedTime;
     }
 
+    /**
+     * Method that determines if a time statement is daytime or not based on a specified time range (6 AM to 6 PM).
+     * If the time is inside of this range, then it is considered "daytime" and returns true,
+     * else it is "nighttime" and returns false.
+     * @param currentTime The resulting String from the getTime method.
+     * @return True if "daytime", false if "nighttime".
+     */
     public static boolean isItDaytime(String currentTime) {
         boolean isDaytime = false;
         try {
@@ -601,6 +653,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             Date timeCurrent = new SimpleDateFormat("h:mm a", getLocale()).parse(currentTime);
 
+            //If current time is AFTER 6 AM and BEFORE 6 PM
             if(timeCurrent.after(time1) && timeCurrent.before(time2)) {
                 isDaytime = true;
             }
@@ -611,6 +664,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return isDaytime;
     }
 
+    /**
+     * Method that determines the correct Locale for language preference purposes.
+     * This is used in the getDate, getTime, and isItDaytime methods in order to
+     * get the right translations based on the language preference.
+     * @return The newly determined Locale based on the user's language preference.
+     */
     public static Locale getLocale() {
         Locale loc = Locale.ENGLISH;
         switch (languagePref) {
@@ -641,6 +700,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return loc;
     }
 
+    /**
+     * Method that capitalizes the inputted String.
+     * This is mainly used for the city names inside of the Navigation Drawer.
+     * @param input Any String, but for the purpose of this app it is the city's name.
+     * @return A String with all words having their first letter capitalized.
+     */
     public static String capitalize(String input) {
         String[] words = input.toLowerCase().split(" ");
         StringBuilder builder = new StringBuilder();
@@ -651,6 +716,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return builder.toString();
     }
 
+    /**
+     * Method that sets/removes a searched city as a favorite once the user taps on the Heart icon.
+     * One tap will mark it as a favorite, another will un-mark it as a favorite.
+     * When doing this, a new menu item is created under the 'Favorites' sub-menu in the Navigation Drawer,
+     * and if unfavorited, will remove that menu item.
+     * In the background, the city will be inserted or deleted from the Room database.
+     * @param view The Heart icon (ToggleButton) next to the city input field.
+     */
     public void setFavorite(View view) {
         boolean checked = ((ToggleButton) view).isChecked();
         String searchedCity = myWeatherInput.getText().toString();
@@ -659,6 +732,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SubMenu subMenu = favoriteLocItem.getSubMenu();
 
         for(int i = 0; i < myCities.size(); i++) {
+            //Populate the HashSet with favorite cities in order to check if it already exists.
             favCitiesSet.add(myCities.get(i).getMyCity());
         }
         if(checked && !favCitiesSet.contains(searchedCity) && searchedCity.trim().length() > 0) {
@@ -669,6 +743,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, "\"" + searchedCity + "\"" + " has been added to Favorites!", Toast.LENGTH_SHORT).show();
         }
         if(checked && favCitiesSet.contains(searchedCity)) {
+            //If a favorite city is manually searched for and is already a favorite,
+            //this message is displayed if the user tries to favorite it again.
             Toast.makeText(this, "This location is already a favorite!", Toast.LENGTH_LONG).show();
         }
         if(!checked && favCitiesSet.contains(searchedCity)) {
@@ -680,6 +756,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     Toast.makeText(this, "\"" + searchedCity + "\"" + " has been removed from Favorites!", Toast.LENGTH_SHORT).show();
 
+                    //Clears the 'Favorites' sub-menu and re-creates it with the city removed.
                     subMenu.clear();
 
                     createInitialFavorites(myCities);
@@ -688,6 +765,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * Method is used to create the 'Favorites' sub-menu in the Navigation Drawer when onCreate is called.
+     * @param citiesList The ArrayList cached copy of the cities that are in the database.
+     */
     public void createInitialFavorites(ArrayList<City> citiesList) {
         MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
         SubMenu subMenu = favoriteLocItem.getSubMenu();

@@ -16,18 +16,33 @@ import com.example.myweatherapp.objects.Weather;
 
 import java.util.ArrayList;
 
+/**
+ * The adapter class for the RecyclerView, contains the daily Weather data.
+ */
 public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.WeatherViewHolder> {
 
+    //Member variables
     private final LayoutInflater myInflater;
     private ArrayList<Weather> myWeather;
     private Context myContext;
 
+    /**
+     * Constructor that passes in the daily Weather data and the context.
+     * @param context Context of the application.
+     * @param weatherData ArrayList containing the daily Weather data.
+     */
     public WeatherListAdapter(Context context, ArrayList<Weather> weatherData) {
         myInflater = LayoutInflater.from(context);
         this.myWeather = weatherData;
         this.myContext = context;
     }
 
+    /**
+     * Required method for creating the viewholder objects.
+     * @param parent The ViewGroup into which the new View will be added after it is bound to an adapter position.
+     * @param viewType The view type of the new View.
+     * @return The newly created Viewholder.
+     */
     @NonNull
     @Override
     public WeatherListAdapter.WeatherViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,6 +50,11 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         return new WeatherViewHolder(itemView);
     }
 
+    /**
+     * Required method that binds the data to the viewholder.
+     * @param holder The viewholder into which the data should be put.
+     * @param position The adapter position.
+     */
     @Override
     public void onBindViewHolder(@NonNull WeatherListAdapter.WeatherViewHolder holder, int position) {
         if(myWeather != null) {
@@ -47,6 +67,10 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         }
     }
 
+    /**
+     * Required method for determining the size of the ArrayList.
+     * @return Size of the Arraylist.
+     */
     @Override
     public int getItemCount() {
         if(myWeather != null) {
@@ -57,14 +81,22 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         }
     }
 
+    /**
+     * ViewHolder class that represents each row of data in the RecyclerView.
+     */
     class WeatherViewHolder extends RecyclerView.ViewHolder {
 
+        //Member variables for the Views.
         private TextView myDayText;
         private ImageView myConditionView;
         private TextView myConditionText;
         private TextView myHighLowText;
 
-        private WeatherViewHolder(View itemView) {
+        /**
+         * Constructor for the ViewHolder, used in onCreateViewHolder().
+         * @param itemView the rootview of the list_item.xml layout file.
+         */
+        WeatherViewHolder(View itemView) {
             super(itemView);
 
             myDayText = itemView.findViewById(R.id.day_field);

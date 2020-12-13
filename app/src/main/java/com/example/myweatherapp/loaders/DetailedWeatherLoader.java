@@ -34,6 +34,6 @@ public class DetailedWeatherLoader extends AsyncTaskLoader<String> {
     @Nullable
     @Override
     public String loadInBackground() {
-        return NetworkUtils.getDetailedWeather(myQueryLat, myQueryLon, myMeasurementType, myLanguage);
+        return NetworkUtils.getDailyWeather(myQueryLat, myQueryLon, myMeasurementType, myLanguage);
     }
 }

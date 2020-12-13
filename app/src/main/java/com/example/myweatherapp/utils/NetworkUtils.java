@@ -33,6 +33,13 @@ public class NetworkUtils {
     //Parameter that excludes certain types of data (ex. minutely, hourly, etc...).
     private static final String EXCLUDE = "exclude";
 
+    /**
+     * Method that initializes the call to the OpenWeather API and retrieves the most recent Weather information for the city.
+     * @param queryString The name of the city that the user is searching for.
+     * @param measurementType The user's preferred measurement type.
+     * @param language The user's preferred language they want the data in.
+     * @return A String containing all of the retrieved data.
+     */
     public static String getCurrentWeather(String queryString, String measurementType, String language) {
         HttpsURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -136,7 +143,15 @@ public class NetworkUtils {
         return currentWeatherJSONString;
     }
 
-    public static String getDetailedWeather(double queryLat, double queryLon, String measurementType, String language) {
+    /**
+     * Method that initializes the One Call API and retrieves the daily Weather information for the city.
+     * @param queryLat The city's latitude
+     * @param queryLon The city's longitude
+     * @param measurementType The user's preferred measurement type.
+     * @param language The user's preferred language they want the data in.
+     * @return A String containing all of the retrieved data.
+     */
+    public static String getDailyWeather(double queryLat, double queryLon, String measurementType, String language) {
         HttpsURLConnection urlConnection = null;
         BufferedReader reader = null;
         String detailedWeatherJSONString = null;
