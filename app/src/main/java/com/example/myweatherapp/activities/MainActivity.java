@@ -199,6 +199,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         measurementPref = sharedPref.getString(SettingsActivity.KEY_PREF_MEASUREMENT, "fahrenheit");
 
         languagePref = sharedPref.getString(SettingsActivity.KEY_PREF_LANGUAGE, "en");
+
+        if(myCities.size() != 0) {
+            myWeatherInput.setText(myCities.get(0).getMyCity());
+            favoritesButton.setEnabled(true);
+            favoritesButton.setChecked(true);
+            searchCurrentWeather(myWeatherInput);
+        }
     }
 
     /**
@@ -261,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Inflate the Options menu.
-        getMenuInflater().inflate(R.menu.activity_main, menu);
+        getMenuInflater().inflate(R.menu.activity_main_options, menu);
         return true;
     }
 
