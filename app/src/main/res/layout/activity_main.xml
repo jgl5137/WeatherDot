@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@id/weather_api_logo"
-                android:text="Powered By"
+                android:text="@string/powered_by_label"
                 android:textColor="?attr/colorOnPrimary" />
 
             <ImageView

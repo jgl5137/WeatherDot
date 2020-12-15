@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         //Initialize the ArrayList that contains the names of recently searched cities.
-        recentLocList = new ArrayList<String>();
+        recentLocList = new ArrayList<>();
 
         //Initiate AsyncTaskLoaders
         if(LoaderManager.getInstance(this).getLoader(CURRENT_WEATHER_LOADER) != null) {
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         createInitialFavorites(myCities);
 
         //Initialize a HashSet of favorite cities in order to check for duplicates.
-        favCitiesSet = new HashSet<String>();
+        favCitiesSet = new HashSet<>();
 
         //Fetches the user's preferences from the Settings menu.
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false);
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(id == R.id.clear_favorites) {
             //Displays a Toast to the user relying their action.
-            Toast.makeText(this, "Your Favorites have been cleared!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.fav_cleared_toast_msg), Toast.LENGTH_LONG).show();
 
             //Fetching the 'Favorites' sub-menu.
             MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(id == R.id.clear_recent) {
             //Displays a Toast to the user relying their action.
-            Toast.makeText(this, "Recent Locations have been cleared!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.rec_loc_cleared_toast_msg), Toast.LENGTH_LONG).show();
 
             //Fetching the 'Recent Locations' sub-menu.
             MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
@@ -348,10 +348,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //If there is no search term or no network connection, then these Toasts will show up as feedback to the user.
         else {
             if(queryString.length() == 0) {
-                Toast.makeText(this, "No city name detected. Please input a valid city name.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.no_city_toast_msg), Toast.LENGTH_LONG).show();
             }
             else {
-                Toast.makeText(this, "Please check your network connection and try again.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.no_network_toast_msg), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -428,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
         //Shows Toast if there is no data to receive due to incorrect spelling of city name.
         if(data == null) {
-            Toast.makeText(this, "Invalid city name. Please check your spelling and input a valid city name.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.invalid_city_toast_msg), Toast.LENGTH_LONG).show();
         }
         int id = loader.getId();
         if(id == CURRENT_WEATHER_LOADER && data != null) {
@@ -495,7 +495,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //If current temperature is found, set up the current Weather display.
                 //Glide is used to load the Weather icon from the OpenWeather URL.
                 if(temp_Current != null) {
-                    myCurrentTimeText.setText("Most Recently: " + time);
+                    myCurrentTimeText.setText(getString(R.string.most_recent_label, time));
                     String iconURL = "https://openweathermap.org/img/wn/" + icon + ".png";
                     Glide.with(this).load(iconURL).override(250, 250).into(myCurrentConditionIcon);
                     myCurrentTempText.setText(temp_Current);
@@ -523,7 +523,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String icon;
                 String cond;
                 String temps;
-                myWeatherData = new ArrayList<Weather>();
+                myWeatherData = new ArrayList<>();
                 String timezone = jsonDetailedObject.getString("timezone");
 
                 //Traversing each item within the JSONArray.
@@ -542,11 +542,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         if(measurementPref.equalsIgnoreCase("celsius")) {
                             //Celsius
-                            temps = "High: " + temp.getInt("max") + "\u2103 \n" + "Low: " + temp.getInt("min") + "\u2103";
+                            temps = getString(R.string.temp_high) + temp.getInt("max") + "\u2103 \n" + getString(R.string.temp_low) + temp.getInt("min") + "\u2103";
                         }
                         else {
                             //Fahrenheit
-                            temps = "High: " + temp.getInt("max") + "\u2109 \n" + "Low: " + temp.getInt("min") + "\u2109";
+                            temps = getString(R.string.temp_high) + temp.getInt("max") + "\u2109 \n" + getString(R.string.temp_low) + temp.getInt("min") + "\u2109";
                         }
 
                         //Adding to the arrayList that holds newly created Weather objects that are made from the recently fetched data.
@@ -603,7 +603,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //On Activity Restart, a Toast will appear to the user to notify them that
         //the app will need to restart in order to use any changed settings that they set.
         super.onRestart();
-        Toast.makeText(this, "If any settings were changed, please restart the app.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.changed_setting_toast_msg), Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -747,12 +747,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), searchedCity);
 
-            Toast.makeText(this, "\"" + searchedCity + "\"" + " has been added to Favorites!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "\"" + searchedCity + "\"" + getString(R.string.added_to_fav_toast_msg), Toast.LENGTH_LONG).show();
         }
         if(checked && favCitiesSet.contains(searchedCity)) {
             //If a favorite city is manually searched for and is already a favorite,
             //this message is displayed if the user tries to favorite it again.
-            Toast.makeText(this, "This location is already a favorite!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.already_fav_toast_msg), Toast.LENGTH_LONG).show();
         }
         if(!checked && favCitiesSet.contains(searchedCity)) {
             for(int j = 0; j < myCities.size(); j++) {
@@ -761,7 +761,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     favCitiesSet.remove(myCities.get(j).getMyCity());
                     myCities.remove(j);
 
-                    Toast.makeText(this, "\"" + searchedCity + "\"" + " has been removed from Favorites!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "\"" + searchedCity + "\"" + getString(R.string.delete_from_fav_toast_msg), Toast.LENGTH_SHORT).show();
 
                     //Clears the 'Favorites' sub-menu and re-creates it with the city removed.
                     subMenu.clear();

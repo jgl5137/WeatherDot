@@ -1,22 +1,22 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="Measurement">
+    <PreferenceCategory app:title="@string/measurement_pref_category">
         <ListPreference
             app:defaultValue="fahrenheit"
             app:entries="@array/measurement_entries"
             app:entryValues="@array/measurement_values"
             app:key="tempMeasure"
-            app:title="Measurement Preference"
+            app:title="@string/measurement_pref_title"
             app:useSimpleSummaryProvider="true"/>
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Language">
+    <PreferenceCategory app:title="@string/language_pref_category">
         <ListPreference
             app:defaultValue="en"
             app:entries="@array/language_entries"
             app:entryValues="@array/language_values"
             app:key="lang"
-            app:title="Language Preference"
+            app:title="@string/language_pref_title"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 

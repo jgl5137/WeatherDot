@@ -25,7 +25,7 @@
             android:id="@+id/day_field"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="filler day"
+            android:text="@string/cardview_filler_day"
             android:layout_toEndOf="@id/condition_image"
             android:textColor="?attr/colorOnPrimary"/>
 
@@ -33,7 +33,7 @@
             android:id="@+id/condition_field"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="filler condition"
+            android:text="@string/cardview_filler_condition"
             android:layout_below="@id/day_field"
             android:layout_toEndOf="@id/condition_image"
             android:textColor="?attr/colorOnPrimary"/>
@@ -42,7 +42,7 @@
             android:id="@+id/temp_high_low"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="50 / 25"
+            android:text="@string/cardview_high_low"
             android:layout_alignParentEnd="true"
             android:textColor="?attr/colorOnPrimary"/>
 

@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/favorite_locations"
-        android:title="Favorites">
+        android:title="@string/favorites_submenu_title">
         <menu>
 
         </menu>
@@ -17,15 +17,15 @@
         </menu>
     </item>
 
-    <item android:title="Other">
+    <item android:title="@string/other_submenu_title">
         <menu>
             <item
                 android:id="@+id/nav_settings"
-                android:title="Settings" />
+                android:title="@string/settings_nav_action" />
 
             <item
                 android:id="@+id/nav_send_feedback"
-                android:title="Send Feedback" />
+                android:title="@string/send_feedback_nav_action" />
 
             <item
                 android:id="@+id/footer_spacer_1"
