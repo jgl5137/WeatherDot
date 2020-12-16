@@ -69,9 +69,6 @@ public class NetworkUtils {
             case "de":
                 chosenLanguage = "de";
                 break;
-            case "ar":
-                chosenLanguage = "ar";
-                break;
             case "zh_cn":
                 chosenLanguage = "zh_cn";
                 break;
@@ -179,9 +176,6 @@ public class NetworkUtils {
                 break;
             case "de":
                 chosenLanguage = "de";
-                break;
-            case "ar":
-                chosenLanguage = "ar";
                 break;
             case "zh_cn":
                 chosenLanguage = "zh_cn";

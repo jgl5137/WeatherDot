@@ -440,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(!recentLocList.contains(jsonObject.getString("name"))) {
                     MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
                     SubMenu subMenu = recentLocItem.getSubMenu();
-                    subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), capitalize(jsonObject.getString("name")));
+                    subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), capitalize(myWeatherInput.getText().toString()));
                     recentLocList.add(jsonObject.getString("name"));
                 }
 
@@ -691,9 +691,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case "de":
                 loc = new Locale("de");
-                break;
-            case "ar":
-                loc = new Locale("ar");
                 break;
             case "zh_cn":
                 loc = Locale.SIMPLIFIED_CHINESE;
