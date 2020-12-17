@@ -3,6 +3,7 @@ package com.example.myweatherapp.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -236,6 +238,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return true;
         }
 
+        if(item.getItemId() == R.id.nav_faq) {
+            drawer.closeDrawer(GravityCompat.START);
+            new AlertDialog.Builder(this)
+                    .setTitle("Frequently Asked Questions")
+                    .setMessage("<b>Q: Why do I not see any information?</b>\n" +
+                            "A: You have not searched for a city yet in the top text field and you do not have any cities set as a \"Favorite\"\n\n" +
+                            "<b>Q: Why is the weather information for the wrong city or for a city with the same name, but in a different country?</b>")
+                    .setPositiveButton("Understood", null)
+                    .show();
+            return true;
+        }
+
         //Action for the 'Settings' item within the 'Other' sub-menu.
         if(item.getItemId() == R.id.nav_settings) {
             drawer.closeDrawer(GravityCompat.START);
@@ -281,24 +295,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if(id == R.id.clear_favorites) {
-            //Displays a Toast to the user relying their action.
-            Toast.makeText(this, getString(R.string.fav_cleared_toast_msg), Toast.LENGTH_LONG).show();
-
-            //Fetching the 'Favorites' sub-menu.
-            MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
-            SubMenu subMenu = favoriteLocItem.getSubMenu();
-
-            //Clears the 'City' table within the Room database.
-            myCityViewModel.deleteAllCities();
-            favoritesButton.setChecked(false);
-            //Clears the cached ArrayList copy of favorite cities.
-            myCities.clear();
-            //Clears the 'Favorites' sub-menu.
-            subMenu.clear();
-            return true;
-        }
-
         if(id == R.id.clear_recent) {
             //Displays a Toast to the user relying their action.
             Toast.makeText(this, getString(R.string.rec_loc_cleared_toast_msg), Toast.LENGTH_LONG).show();
@@ -311,6 +307,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             recentLocList.clear();
             //Clears the 'Recent Locations' sub-menu.
             subMenu.clear();
+            return true;
+        }
+
+        if(id == R.id.clear_favorites) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Clear Favorites")
+                    .setMessage("Are you sure you want to delete all of your favorite locations?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Displays a Toast to the user relying their action.
+                            Toast.makeText(MainActivity.this, getString(R.string.fav_cleared_toast_msg), Toast.LENGTH_LONG).show();
+
+                            //Fetching the 'Favorites' sub-menu.
+                            MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
+                            SubMenu subMenu = favoriteLocItem.getSubMenu();
+
+                            //Clears the 'City' table within the Room database.
+                            myCityViewModel.deleteAllCities();
+                            favoritesButton.setChecked(false);
+                            //Clears the cached ArrayList copy of favorite cities.
+                            myCities.clear();
+                            //Clears the 'Favorites' sub-menu.
+                            subMenu.clear();
+                        }
+                    })
+
+                    .setNegativeButton("Cancel", null)
+                    .show();
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -20,6 +20,9 @@
     <item android:title="@string/other_submenu_title">
         <menu>
             <item
+                android:id="@+id/nav_faq"
+                android:title="FAQ" />
+            <item
                 android:id="@+id/nav_settings"
                 android:title="@string/settings_nav_action" />
 
