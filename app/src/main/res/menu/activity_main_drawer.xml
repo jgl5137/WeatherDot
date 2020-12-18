@@ -21,7 +21,7 @@
         <menu>
             <item
                 android:id="@+id/nav_faq"
-                android:title="FAQ" />
+                android:title="@string/faq_nav_action" />
             <item
                 android:id="@+id/nav_settings"
                 android:title="@string/settings_nav_action" />

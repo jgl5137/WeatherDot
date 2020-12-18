@@ -25,6 +25,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -82,8 +84,8 @@ import java.util.TimeZone;
  * are shown on the rest of the screen display through a RecyclerView.
  * Each card inside of the RecyclerView contains a corresponding condition icon,
  * a date, the weather condition, and that day's high & low temperatures.
- * The Navigation Drawer also includes access the the app's settings
- * through the 'Settings' button and a 'Send Feedback' button that directs
+ * The Navigation Drawer also includes access to a FAQ dialog, the app's settings
+ * through the 'Settings' button, and a 'Send Feedback' button that directs
  * the user to their preferred email app and loads an email addressed to the developer's email.
  */
 
@@ -240,11 +242,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(item.getItemId() == R.id.nav_faq) {
             drawer.closeDrawer(GravityCompat.START);
+            String s1 = getString(R.string.faq1);
+            String s2 = getString(R.string.faq1a);
+            String s3 = getString(R.string.faq2);
+            String s4 = getString(R.string.faq2a1);
+            String s5 = getString(R.string.faq2a2);
+            String s6 = getString(R.string.faq2a3);
+            String s7 = getString(R.string.faq3);
+            String s8 = getString(R.string.faq3a1);
+            String s9 = getString(R.string.faq3a2);
+            Spanned strMessage = Html.fromHtml(s1 + "<br>" + s2 + "<br><br>" + s3 + "<br>" + s4 + " " + s5 + " " + s6 + "<br><br>" + s7 + "<br>" + s8 + " " + s9);
             new AlertDialog.Builder(this)
-                    .setTitle("Frequently Asked Questions")
-                    .setMessage("<b>Q: Why do I not see any information?</b>\n" +
-                            "A: You have not searched for a city yet in the top text field and you do not have any cities set as a \"Favorite\"\n\n" +
-                            "<b>Q: Why is the weather information for the wrong city or for a city with the same name, but in a different country?</b>")
+                    .setTitle(R.string.faq_title)
+                    .setMessage(strMessage)
                     .setPositiveButton("Understood", null)
                     .show();
             return true;
@@ -312,9 +322,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(id == R.id.clear_favorites) {
             new AlertDialog.Builder(this)
-                    .setTitle("Clear Favorites")
-                    .setMessage("Are you sure you want to delete all of your favorite locations?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    .setTitle(getString(R.string.clear_favorites_action))
+                    .setMessage(R.string.clear_favorites_confirm)
+                    .setPositiveButton(R.string.yes_button_text, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Displays a Toast to the user relying their action.
@@ -334,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                     })
 
-                    .setNegativeButton("Cancel", null)
+                    .setNegativeButton(R.string.cancel_button_text, null)
                     .show();
             return true;
         }
