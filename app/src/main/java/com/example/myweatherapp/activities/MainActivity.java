@@ -127,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         favoritesButton = findViewById(R.id.favorite_button);
         myWeatherInput = findViewById(R.id.search_field);
+        myWeatherInput.setTextColor(getResources().getColor(R.color.white));
+        myWeatherInput.setHintTextColor(getResources().getColor(R.color.white));
         myWeatherInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -242,20 +244,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(item.getItemId() == R.id.nav_faq) {
             drawer.closeDrawer(GravityCompat.START);
-            String s1 = getString(R.string.faq1);
-            String s2 = getString(R.string.faq1a);
-            String s3 = getString(R.string.faq2);
-            String s4 = getString(R.string.faq2a1);
-            String s5 = getString(R.string.faq2a2);
-            String s6 = getString(R.string.faq2a3);
-            String s7 = getString(R.string.faq3);
-            String s8 = getString(R.string.faq3a1);
-            String s9 = getString(R.string.faq3a2);
-            Spanned strMessage = Html.fromHtml(s1 + "<br>" + s2 + "<br><br>" + s3 + "<br>" + s4 + " " + s5 + " " + s6 + "<br><br>" + s7 + "<br>" + s8 + " " + s9);
+            String faq1 = getString(R.string.faq1);
+            String faq1a = getString(R.string.faq1a);
+            String faq2 = getString(R.string.faq2);
+            String faq2a1 = getString(R.string.faq2a1);
+            String faq2a2 = getString(R.string.faq2a2);
+            String faq2a3 = getString(R.string.faq2a3);
+            String faq3 = getString(R.string.faq3);
+            String faq3a1 = getString(R.string.faq3a1);
+            String faq3a2 = getString(R.string.faq3a2);
+            Spanned strMessage = Html.fromHtml(faq1 + "<br>" + faq1a + "<br><br>" + faq2 + "<br>" + faq2a1 + " " + faq2a2 + " " + faq2a3 + "<br><br>" + faq3 + "<br>" + faq3a1 + " " + faq3a2);
             new AlertDialog.Builder(this)
                     .setTitle(R.string.faq_title)
                     .setMessage(strMessage)
-                    .setPositiveButton("Understood", null)
+                    .setPositiveButton(R.string.understood_button_text, null)
                     .show();
             return true;
         }

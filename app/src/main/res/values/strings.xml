@@ -32,18 +32,19 @@
     <string name="already_fav_toast_msg">This location is already a favorite!</string>
     <string name="delete_from_fav_toast_msg">\u0020has been removed from Favorites!</string>
     <string name="settings_activity_title">Settings</string>
-    <string name="clear_favorites_confirm" tools:ignore="MissingTranslation">Are you sure you want to delete all of your favorite locations?</string>
-    <string name="yes_button_text" tools:ignore="MissingTranslation">Yes</string>
-    <string name="cancel_button_text" tools:ignore="MissingTranslation">Cancel</string>
-    <string name="faq_nav_action" tools:ignore="MissingTranslation">FAQ</string>
-    <string name="faq_title" tools:ignore="MissingTranslation">Frequently Asked Questions</string>
-    <string name="faq1" tools:ignore="MissingTranslation"><![CDATA[<b>Q: Why do I not see any information?</b>]]></string>
-    <string name="faq1a" tools:ignore="MissingTranslation">A: You have not searched for a city yet in the top text field and you do not have any cities set as a \"Favorite\".</string>
-    <string name="faq2" tools:ignore="MissingTranslation"><![CDATA[<b>Q: Why is the weather information for the wrong city or for a city with the same name, but in a different country?</b>]]></string>
-    <string name="faq2a1" tools:ignore="MissingTranslation">A: Currently the app does not have the ability to differentiate between any similarly named cities, unless the search contains a country code.</string>
-    <string name="faq2a2" tools:ignore="MissingTranslation">For example, if \"Rome\" is searched for, the data shown will be from Rome, New York, United States.</string>
-    <string name="faq2a3" tools:ignore="MissingTranslation">If the country is specified, such as \"Rome,IT\", then the Weather data will be for Rome in Italy.</string>
-    <string name="faq3" tools:ignore="MissingTranslation"><![CDATA[<b>Q: What does the blue/purple background color mean?</b>]]></string>
-    <string name="faq3a1" tools:ignore="MissingTranslation">A: The app retrieves the Weather data of a city in the specified timezone it is located in.</string>
-    <string name="faq3a2" tools:ignore="MissingTranslation">The blue background is to help indicate that it is daytime wherever the city is, purple will indicate nighttime.</string>
+    <string name="clear_favorites_confirm">Are you sure you want to delete all of your favorite locations?</string>
+    <string name="yes_button_text">Yes</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="faq_nav_action">FAQ</string>
+    <string name="faq_title">Frequently Asked Questions</string>
+    <string name="faq1"><![CDATA[<b>Q: Why do I not see any information?</b>]]></string>
+    <string name="faq1a">A: You have not searched for a city yet in the top text field and you do not have any cities set as a \"Favorite\".</string>
+    <string name="faq2"><![CDATA[<b>Q: Why is the weather information for the wrong city or for a city with the same name, but in a different country?</b>]]></string>
+    <string name="faq2a1">A: Currently the app does not have the ability to differentiate between any similarly named cities, unless the search contains a country code.</string>
+    <string name="faq2a2">For example, if \"Rome\" is searched for, the data shown will be from Rome, New York, United States.</string>
+    <string name="faq2a3">If the country is specified, such as \"Rome,IT\", then the Weather data will be for Rome in Italy.</string>
+    <string name="faq3"><![CDATA[<b>Q: What does the blue/purple background color mean?</b>]]></string>
+    <string name="faq3a1">A: The app retrieves the Weather data of a city in the specified timezone it is located in.</string>
+    <string name="faq3a2">The blue background is to help indicate that it is daytime wherever the city is, purple will indicate nighttime.</string>
+    <string name="understood_button_text">Understood</string>
 </resources>

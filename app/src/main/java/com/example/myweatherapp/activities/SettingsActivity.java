@@ -1,5 +1,6 @@
 package com.example.myweatherapp.activities;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -29,6 +30,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.settings_activity_title);
+            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.blue_grey_800)));
         }
     }
 

@@ -28,7 +28,7 @@
                 android:id="@+id/search_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:width="150dp"
+                android:width="200dp"
                 android:hint="@string/city_input_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="textCapWords|textAutoCorrect"
