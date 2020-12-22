@@ -41,7 +41,7 @@
     <string name="faq_nav_action">자주하는 질문</string>
     <string name="faq_title">자주 묻는 질문</string>
     <string name="faq1"><![CDATA[<b>Q : 정보가 표시되지 않는 이유는 무엇입니까?</b>]]></string>
-    <string name="faq1a">A : 상위 텍스트 필드에서 아직 도시를 검색하지 않았고 즐겨 찾기로 설정된 도시가 없습니다.</string>
+    <string name="faq1a">A : 상위 텍스트 필드에서 아직 도시를 검색하지 않았고 즐겨 찾기로 설정된 도시가 없습니다. 로마 알파벳을 사용하여 도시 이름을 입력하고 있는지 확인하십시오 (전의: A B C D).</string>
     <string name="faq2"><![CDATA[<b>Q : 날씨 정보가 잘못된 도시 또는 이름은 같지만 다른 국가에있는 도시에 대한 이유는 무엇입니까?</b>]]></string>
     <string name="faq2a1">A : 검색에 국가 코드가 포함되어 있지 않는 한 현재 앱은 유사한 이름의 도시를 구별 할 수 없습니다.</string>
     <string name="faq2a2">예를 들어 로마를 검색하면 표시되는 데이터는 미국 뉴욕의 로마에서 가져온 것입니다.</string>

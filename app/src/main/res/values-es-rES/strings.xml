@@ -41,7 +41,7 @@
     <string name="faq_nav_action">Preguntas más frecuentes</string>
     <string name="faq_title">Preguntas más frecuentes</string>
     <string name="faq1"><![CDATA[<b>P: ¿Por qué no veo ninguna información?</b>]]></string>
-    <string name="faq1a">R: Aún no ha buscado una ciudad en el campo de texto superior y no tiene ninguna ciudad establecida como \"favorita\".</string>
+    <string name="faq1a">R: Aún no ha buscado una ciudad en el campo de texto superior y no tiene ninguna ciudad establecida como \"favorita\". Asegúrese de escribir el nombre de la ciudad utilizando el alfabeto romano (ex. A B C D).</string>
     <string name="faq2"><![CDATA[<b>P: ¿Por qué la información meteorológica es para la ciudad incorrecta o para una ciudad con el mismo nombre, pero en un país diferente?</b>]]></string>
     <string name="faq2a1">R: Actualmente, la aplicación no tiene la capacidad de diferenciar entre ciudades con nombres similares, a menos que la búsqueda contenga un código de país.</string>
     <string name="faq2a2">Por ejemplo, si se busca \"Roma\", los datos que se muestran serán de Roma, Nueva York, Estados Unidos.</string>

@@ -38,7 +38,7 @@
     <string name="faq_nav_action">FAQ</string>
     <string name="faq_title">Frequently Asked Questions</string>
     <string name="faq1"><![CDATA[<b>Q: Why do I not see any information?</b>]]></string>
-    <string name="faq1a">A: You have not searched for a city yet in the top text field and you do not have any cities set as a \"Favorite\".</string>
+    <string name="faq1a">A: You have not searched for a city yet in the top text field and you do not have any cities set as a \"Favorite\". Please make sure that you are typing the city name using the Roman alphabet (ex. A B C D).</string>
     <string name="faq2"><![CDATA[<b>Q: Why is the weather information for the wrong city or for a city with the same name, but in a different country?</b>]]></string>
     <string name="faq2a1">A: Currently the app does not have the ability to differentiate between any similarly named cities, unless the search contains a country code.</string>
     <string name="faq2a2">For example, if \"Rome\" is searched for, the data shown will be from Rome, New York, United States.</string>

@@ -41,7 +41,7 @@
     <string name="faq_nav_action">常问问题</string>
     <string name="faq_title">经常问的问题</string>
     <string name="faq1"><![CDATA[<b>问：为什么我看不到任何信息？</b>]]></string>
-    <string name="faq1a">答：您尚未在顶部文本字段中搜索城市，并且没有将任何城市设置为“收藏夹”。</string>
+    <string name="faq1a">答：您尚未在顶部文本字段中搜索城市，并且没有将任何城市设置为“收藏夹”。请确保您使用罗马字母输入城市名称 (例如 A B C D)。</string>
     <string name="faq2"><![CDATA[<b>问：为什么错误的城市或同名城市但在不同国家/地区的天气信息？</b>]]></string>
     <string name="faq2a1">答：目前，该应用程序无法区分任何名称相似的城市，除非搜索中包含国家/地区代码。</string>
     <string name="faq2a2">例如，如果搜索“罗马”，则显示的数据将来自美国纽约的罗马。</string>

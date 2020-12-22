@@ -41,7 +41,7 @@
     <string name="faq_nav_action">よくある質問</string>
     <string name="faq_title">よくある質問</string>
     <string name="faq1"><![CDATA[<b>Q：情報が表示されないのはなぜですか？</b>]]></string>
-    <string name="faq1a">A：上部のテキストフィールドでまだ都市を検索しておらず、お気に入りとして設定されている都市がありません。</string>
+    <string name="faq1a">A：上部のテキストフィールドでまだ都市を検索しておらず、お気に入りとして設定されている都市がありません。ローマ字を使用して都市名を入力していることを確認してください (例：A B C D)。</string>
     <string name="faq2"><![CDATA[<b>Q：間違った都市や同じ名前の都市の天気情報が、国が異なるのはなぜですか？</b>]]></string>
     <string name="faq2a1">A：現在、検索に国コードが含まれていない限り、アプリには同様の名前の都市を区別する機能がありません。</string>
     <string name="faq2a2">たとえば、ローマを検索した場合、表示されるデータは米国ニューヨーク州ローマからのものになります。</string>
