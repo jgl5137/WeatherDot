@@ -8,17 +8,19 @@ import androidx.loader.content.AsyncTaskLoader;
 
 import com.example.myweatherapp.utils.NetworkUtils;
 
-public class CurrentWeatherLoader extends AsyncTaskLoader<String> {
+public class WeatherLoader extends AsyncTaskLoader<String> {
 
     //Member variables
-    private String myWeatherQueryString;
+    private double myQueryLat;
+    private double myQueryLon;
     private String myMeasurementType;
     private String myLanguage;
 
     //AsyncTaskLoader constructor
-    public CurrentWeatherLoader(@NonNull Context context, String queryString, String measurementType, String language) {
+    public WeatherLoader(@NonNull Context context, double lat, double lon, String measurementType, String language) {
         super(context);
-        myWeatherQueryString = queryString;
+        myQueryLat = lat;
+        myQueryLon = lon;
         myMeasurementType = measurementType;
         myLanguage = language;
     }
@@ -32,6 +34,6 @@ public class CurrentWeatherLoader extends AsyncTaskLoader<String> {
     @Nullable
     @Override
     public String loadInBackground() {
-        return NetworkUtils.getCurrentWeather(myWeatherQueryString, myMeasurementType, myLanguage);
+        return NetworkUtils.getWeather(myQueryLat, myQueryLon, myMeasurementType, myLanguage);
     }
 }

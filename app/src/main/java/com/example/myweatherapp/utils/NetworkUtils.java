@@ -15,7 +15,7 @@ public class NetworkUtils {
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
     private static final String API_KEY = "e83f7c0a2b6d6c8316fea85fb334134c";
     //Base URL for OpenWeather API
-    private static final String CURRENT_OPEN_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?";
+    private static final String LAT_LON_OPEN_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?";
     //Parameter for the search string.
     private static final String QUERY_PARAM = "q";
     //Parameter that corresponds to temperature measurement type (Fahrenheit or Celsius).
@@ -40,10 +40,10 @@ public class NetworkUtils {
      * @param language The user's preferred language they want the data in.
      * @return A String containing all of the retrieved data.
      */
-    public static String getCurrentWeather(String queryString, String measurementType, String language) {
+    public static String getLatLon(String queryString, String measurementType, String language) {
         HttpsURLConnection urlConnection = null;
         BufferedReader reader = null;
-        String currentWeatherJSONString = null;
+        String latLonJSONString = null;
         String measureType = "";
         String chosenLanguage = "";
 
@@ -81,7 +81,7 @@ public class NetworkUtils {
 
         try{
             //Building the URL
-            Uri builtURI = Uri.parse(CURRENT_OPEN_WEATHER_URL).buildUpon()
+            Uri builtURI = Uri.parse(LAT_LON_OPEN_WEATHER_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, queryString)
                     .appendQueryParameter(UNITS, measureType)
                     .appendQueryParameter(LANG, chosenLanguage)
@@ -114,10 +114,11 @@ public class NetworkUtils {
                 return null;
             }
 
-            currentWeatherJSONString = builder.toString();
+            latLonJSONString = builder.toString();
 
             //Read the API's output for debugging purposes.
-            Log.d(LOG_TAG, currentWeatherJSONString);
+            Log.d(LOG_TAG, latLonJSONString);
+            Log.d(LOG_TAG, builtURI.toString());
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -137,7 +138,7 @@ public class NetworkUtils {
             }
         }
         //Sending the data back to the Main Activity.
-        return currentWeatherJSONString;
+        return latLonJSONString;
     }
 
     /**
@@ -148,10 +149,10 @@ public class NetworkUtils {
      * @param language The user's preferred language they want the data in.
      * @return A String containing all of the retrieved data.
      */
-    public static String getDailyWeather(double queryLat, double queryLon, String measurementType, String language) {
+    public static String getWeather(double queryLat, double queryLon, String measurementType, String language) {
         HttpsURLConnection urlConnection = null;
         BufferedReader reader = null;
-        String detailedWeatherJSONString = null;
+        String weatherJSONString = null;
         String measureType = "";
         String chosenLanguage = "";
 
@@ -192,7 +193,7 @@ public class NetworkUtils {
             Uri builtURI = Uri.parse(DETAILED_OPEN_WEATHER_URL).buildUpon()
                     .appendQueryParameter(LAT, String.valueOf(queryLat))
                     .appendQueryParameter(LON, String.valueOf(queryLon))
-                    .appendQueryParameter(EXCLUDE, "current,minutely,hourly,alerts")
+                    .appendQueryParameter(EXCLUDE, "minutely,hourly,alerts")
                     .appendQueryParameter(UNITS, measureType)
                     .appendQueryParameter(LANG, chosenLanguage)
                     .appendQueryParameter(APP_ID, API_KEY)
@@ -223,10 +224,10 @@ public class NetworkUtils {
                 return null;
             }
 
-            detailedWeatherJSONString = builder.toString();
+            weatherJSONString = builder.toString();
 
             //Read the API's output for debugging purposes.
-            Log.d(LOG_TAG, detailedWeatherJSONString);
+            Log.d(LOG_TAG, weatherJSONString);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -246,6 +247,6 @@ public class NetworkUtils {
             }
         }
         //Sending the data back to the Main Activity.
-        return detailedWeatherJSONString;
+        return weatherJSONString;
     }
 }

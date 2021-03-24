@@ -45,8 +45,8 @@ import com.example.myweatherapp.R;
 import com.example.myweatherapp.adapters.WeatherListAdapter;
 import com.example.myweatherapp.database.City;
 import com.example.myweatherapp.database.CityViewModel;
-import com.example.myweatherapp.loaders.CurrentWeatherLoader;
-import com.example.myweatherapp.loaders.DetailedWeatherLoader;
+import com.example.myweatherapp.loaders.LatLonLoader;
+import com.example.myweatherapp.loaders.WeatherLoader;
 import com.example.myweatherapp.objects.Weather;
 import com.google.android.material.navigation.NavigationView;
 
@@ -95,13 +95,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private CityViewModel myCityViewModel;
     private RecyclerView myRecyclerView;
     private WeatherListAdapter myAdapter;
-    private EditText myWeatherInput;
+    private EditText myCityInput;
     private ImageView myWeatherBackground;
     private TextView myCurrentTimeText;
     private ImageView myCurrentConditionIcon;
     private TextView myCurrentTempText;
     private TextView myCurrentConditionText;
-    private ArrayList<Weather> myWeatherData;
+    private ArrayList<Weather> myDailyWeatherData;
     private NavigationView navigationView;
     private ArrayList<String> recentLocList;
     private ToggleButton favoritesButton;
@@ -111,8 +111,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static String languagePref;
 
     //AsyncTaskLoader IDs
-    private static final int CURRENT_WEATHER_LOADER = 1;
-    private static final int DETAILED_WEATHER_LOADER = 2;
+    private static final int LAT_LON_LOADER = 1;
+    private static final int WEATHER_LOADER = 2;
 
     /**
      * MainActivity's onCreate lifecycle state.
@@ -126,16 +126,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Initializing the toolbar and various views
         Toolbar toolbar = findViewById(R.id.toolbar);
         favoritesButton = findViewById(R.id.favorite_button);
-        myWeatherInput = findViewById(R.id.search_field);
-        myWeatherInput.setTextColor(getResources().getColor(R.color.white));
-        myWeatherInput.setHintTextColor(getResources().getColor(R.color.white));
-        myWeatherInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        myCityInput = findViewById(R.id.search_field);
+        myCityInput.setTextColor(getResources().getColor(R.color.white));
+        myCityInput.setHintTextColor(getResources().getColor(R.color.white));
+        myCityInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 //Determines what the 'Search' button on the keyboard does.
                 if(actionId == EditorInfo.IME_ACTION_SEARCH) {
                     //Tapping the button initiates the weather query and enables the favorites button (Heart icon).
-                    searchCurrentWeather(textView);
+                    getLatLon(textView);
                     textView.clearFocus();
                     favoritesButton.setEnabled(true);
                     favoritesButton.setChecked(false);
@@ -171,11 +171,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recentLocList = new ArrayList<>();
 
         //Initiate AsyncTaskLoaders
-        if(LoaderManager.getInstance(this).getLoader(CURRENT_WEATHER_LOADER) != null) {
-            LoaderManager.getInstance(this).initLoader(CURRENT_WEATHER_LOADER, null, this);
+        if(LoaderManager.getInstance(this).getLoader(LAT_LON_LOADER) != null) {
+            LoaderManager.getInstance(this).initLoader(LAT_LON_LOADER, null, this);
         }
-        if(LoaderManager.getInstance(this).getLoader(DETAILED_WEATHER_LOADER) != null) {
-            LoaderManager.getInstance(this).initLoader(DETAILED_WEATHER_LOADER, null, this);
+        if(LoaderManager.getInstance(this).getLoader(WEATHER_LOADER) != null) {
+            LoaderManager.getInstance(this).initLoader(WEATHER_LOADER, null, this);
         }
 
         //Initialize the ViewModel that connects to the Room database.
@@ -207,10 +207,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         languagePref = sharedPref.getString(SettingsActivity.KEY_PREF_LANGUAGE, "en");
 
         if(myCities.size() != 0) {
-            myWeatherInput.setText(myCities.get(0).getMyCity());
+            myCityInput.setText(myCities.get(0).getMyCity());
             favoritesButton.setEnabled(true);
             favoritesButton.setChecked(true);
-            searchCurrentWeather(myWeatherInput);
+            getLatLon(myCityInput);
         }
     }
 
@@ -226,19 +226,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Action for items within the 'Favorites' sub-menu.
         if(item.getItemId() == Menu.FIRST) {
             drawer.closeDrawer(GravityCompat.START);
-            myWeatherInput.setText(item.getTitle());
+            myCityInput.setText(item.getTitle());
             favoritesButton.setEnabled(true);
             favoritesButton.setChecked(true);
-            searchCurrentWeather(myWeatherInput);
+            getLatLon(myCityInput);
             return true;
         }
 
         //Action for items within the 'Recent Locations' sub-menu.
         if(item.getItemId() == Menu.NONE) {
             drawer.closeDrawer(GravityCompat.START);
-            myWeatherInput.setText(item.getTitle());
+            myCityInput.setText(item.getTitle());
             favoritesButton.setEnabled(true);
-            searchCurrentWeather(myWeatherInput);
+            getLatLon(myCityInput);
             return true;
         }
 
@@ -357,9 +357,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Method that initiates the search for current Weather using OpenWeather API.
      * @param view The input field where the user types in a city name.
      */
-    public void searchCurrentWeather(View view) {
+    public void getLatLon(View view) {
         //Get the search string from the input field.
-        String queryString = myWeatherInput.getText().toString();
+        String queryString = myCityInput.getText().toString();
 
         //Closes the keyboard after clicking the 'Search' button
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -398,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @param lat The latitude of the city that is being searched for.
      * @param lon The longitude of the city that is being searched for.
      */
-    public void searchDailyWeather(double lat, double lon) {
+    public void searchWeather(double lat, double lon) {
         //Checks the network connection of the device.
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = null;
@@ -428,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String measurementType = "";
         String chosenLanguage = "";
 
-        if(id == CURRENT_WEATHER_LOADER) {
+        if(id == LAT_LON_LOADER) {
             //The name of the city that is being searched for.
             String queryString = "";
 
@@ -437,9 +437,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 measurementType = measurementPref;
                 chosenLanguage = languagePref;
             }
-            return new CurrentWeatherLoader(this, queryString, measurementType, chosenLanguage);
+            return new LatLonLoader(this, queryString, measurementType, chosenLanguage);
         }
-        if(id == DETAILED_WEATHER_LOADER) {
+        if(id == WEATHER_LOADER) {
             //The latitude and longitude of the city that is being searched for.
             double queryLat = 0;
             double queryLon = 0;
@@ -450,7 +450,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 measurementType = measurementPref;
                 chosenLanguage = languagePref;
             }
-            return new DetailedWeatherLoader(this, queryLat, queryLon, measurementType, chosenLanguage);
+            return new WeatherLoader(this, queryLat, queryLon, measurementType, chosenLanguage);
         }
         return null;
     }
@@ -468,7 +468,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, getString(R.string.invalid_city_toast_msg), Toast.LENGTH_LONG).show();
         }
         int id = loader.getId();
-        if(id == CURRENT_WEATHER_LOADER && data != null) {
+        if(id == LAT_LON_LOADER && data != null) {
             try{
                 JSONObject jsonObject = new JSONObject(data);
 
@@ -477,32 +477,64 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(!recentLocList.contains(jsonObject.getString("name"))) {
                     MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
                     SubMenu subMenu = recentLocItem.getSubMenu();
-                    subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), capitalize(myWeatherInput.getText().toString()));
+                    subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), capitalize(myCityInput.getText().toString()));
                     recentLocList.add(jsonObject.getString("name"));
                 }
 
-                //Various JSON access points based on their label.
+                //JSON access point for the coordinates.
                 JSONObject coordObject = jsonObject.getJSONObject("coord");
-                JSONArray weatherDescObject = jsonObject.getJSONArray("weather");
-                JSONObject mainObject = jsonObject.getJSONObject("main");
-                //Initializing various member variables that will hold the data gathered from the above access points.
-                String time = null;
-                String condition = null;
-                String temp_Current = null;
+
+                //Initializing latitude and longitude member variables that will hold the data gathered from the above access point.
                 double coord_lat = 0;
                 double coord_lon = 0;
-                long dt_current;
-                int timezoneOffset;
-                String icon = null;
 
-                //Try to get deltaTime, timezone, condition icon, current temperature, weather condition, latitude, and longitude from data.
+                //Try to get latitude and longitude from data.
                 //Catch if any field is empty and move on.
                 try{
-                    dt_current = jsonObject.getLong("dt");
-                    timezoneOffset = jsonObject.getInt("timezone");
-                    time = getTime(dt_current, timezoneOffset);
-                    //Sets the color of the current weather display based on time of day.
-                    if(isItDaytime(time)) {
+                    coord_lat = coordObject.getDouble("lat");
+                    coord_lon = coordObject.getDouble("lon");
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+                searchWeather(coord_lat, coord_lon);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if(id == WEATHER_LOADER && data != null) {
+            //Try to get (split between current and daily weather categories) deltaTime, timezone, temperatures, weather conditions, and condition icons from the data.
+            //Catch if any field is empty and move on.
+            try{
+                JSONObject jsonDetailedObject = new JSONObject(data);
+                //JSON Current access point
+                JSONObject jsonCurrentObject = jsonDetailedObject.getJSONObject("current");
+                JSONArray jsonCurrentWeatherObject = jsonCurrentObject.getJSONArray("weather");
+                //JSON Daily access point
+                JSONArray jsonDailyObject = jsonDetailedObject.getJSONArray("daily");
+
+                //Initializing various member variables that will hold the data gathered from the JSON access points.
+                int i = 0;
+                String timeCurrent = null;
+                String timezoneCurrent = null;
+                String conditionCurrent = null;
+                String tempCurrent = null;
+                long dtCurrent;
+                String iconCurrent = null;
+                long dtDaily;
+                String dayDaily;
+                String iconDaily;
+                String condDaily;
+                String tempsDaily;
+                myDailyWeatherData = new ArrayList<>();
+                String timezoneDaily = jsonDetailedObject.getString("timezone");
+
+                try{
+                    dtCurrent = jsonCurrentObject.getLong("dt");
+                    timezoneCurrent = jsonDetailedObject.getString("timezone");
+                    timeCurrent = getTime(dtCurrent, timezoneCurrent);
+                    //Sets the color fo the current weather display based on time of day.
+                    if(isItDaytime(timeCurrent)) {
                         myWeatherBackground.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_day));
                     }
                     else {
@@ -510,58 +542,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                     myWeatherBackground.setVisibility(View.VISIBLE);
 
-                    icon = weatherDescObject.getJSONObject(0).getString("icon");
-
+                    iconCurrent = jsonCurrentWeatherObject.getJSONObject(0).getString("icon");
                     //Sets the temperature measurement type based on user's settings.
                     if(measurementPref.equalsIgnoreCase("celsius")) {
                         //Celsius
-                        temp_Current = "" + mainObject.getInt("temp") + "\u2103";
+                        tempCurrent = "" + jsonCurrentObject.getInt("temp") + "\u2103";
                     }
                     else {
                         //Fahrenheit
-                        temp_Current = "" + mainObject.getInt("temp") + "\u2109";
+                        tempCurrent = "" + jsonCurrentObject.getInt("temp") + "\u2109";
                     }
-
-                    //Fetching the Weather condition string and latitude & longitude for use of the One Call API.
-                    condition = capitalize(weatherDescObject.getJSONObject(0).getString("description"));
-                    coord_lat = coordObject.getDouble("lat");
-                    coord_lon = coordObject.getDouble("lon");
-                }catch (Exception e) {
+                    //Fetching the weather condition string.
+                    conditionCurrent = capitalize(jsonCurrentWeatherObject.getJSONObject(0).getString("description"));
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
-                //If current temperature is found, set up the current Weather display.
-                //Glide is used to load the Weather icon from the OpenWeather URL.
-                if(temp_Current != null) {
-                    myCurrentTimeText.setText(getString(R.string.most_recent_label, time));
-                    String iconURL = "https://openweathermap.org/img/wn/" + icon + ".png";
+                //If current temperature is found, set up the current weather display.
+                //Glide is used to load the weather icon from the OpenWeather API.
+                if(tempCurrent != null) {
+                    myCurrentTimeText.setText(getString(R.string.most_recent_label, timeCurrent));
+                    String iconURL = "https://openweathermap.org/img/wn/" + iconCurrent + ".png";
                     Glide.with(this).load(iconURL).override(250, 250).into(myCurrentConditionIcon);
-                    myCurrentTempText.setText(temp_Current);
-                    myCurrentConditionText.setText(condition);
-                    //Using the latitude & longitude gathered from this first API call, the daily Weather search is initiated.
-                    searchDailyWeather(coord_lat, coord_lon);
+                    myCurrentTempText.setText(tempCurrent);
+                    myCurrentConditionText.setText(conditionCurrent);
                 }
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        if(id == DETAILED_WEATHER_LOADER && data != null) {
-            //Try to get deltaTime, timezone, high & low temperatures, Weather conditions, and condition icons from the data.
-            //Catch if any field is empty and move on.
-            try{
-                JSONObject jsonDetailedObject = new JSONObject(data);
-                //JSON Daily access point
-                JSONArray jsonDailyObject = jsonDetailedObject.getJSONArray("daily");
-
-                //Initializing various member variables that will hold the data gathered from the JSON access points.
-                int i = 0;
-                long dt;
-                String day;
-                String icon;
-                String cond;
-                String temps;
-                myWeatherData = new ArrayList<>();
-                String timezone = jsonDetailedObject.getString("timezone");
 
                 //Traversing each item within the JSONArray.
                 while(i < jsonDailyObject.length()) {
@@ -572,23 +577,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     JSONObject weatherArrObject = weatherArr.getJSONObject(0);
 
                     try{
-                        dt = daily.getLong("dt");
-                        day = getDate(dt, timezone);
-                        icon = weatherArrObject.getString("icon");
-                        cond = capitalize(weatherArrObject.getString("description"));
+                        dtDaily = daily.getLong("dt");
+                        dayDaily = getDate(dtDaily, timezoneDaily);
+                        iconDaily = weatherArrObject.getString("icon");
+                        condDaily = capitalize(weatherArrObject.getString("description"));
 
                         if(measurementPref.equalsIgnoreCase("celsius")) {
                             //Celsius
-                            temps = getString(R.string.temp_high) + temp.getInt("max") + "\u2103 \n" + getString(R.string.temp_low) + temp.getInt("min") + "\u2103";
+                            tempsDaily = getString(R.string.temp_high) + temp.getInt("max") + "\u2103 \n" + getString(R.string.temp_low) + temp.getInt("min") + "\u2103";
                         }
                         else {
                             //Fahrenheit
-                            temps = getString(R.string.temp_high) + temp.getInt("max") + "\u2109 \n" + getString(R.string.temp_low) + temp.getInt("min") + "\u2109";
+                            tempsDaily = getString(R.string.temp_high) + temp.getInt("max") + "\u2109 \n" + getString(R.string.temp_low) + temp.getInt("min") + "\u2109";
                         }
 
                         //Adding to the arrayList that holds newly created Weather objects that are made from the recently fetched data.
                         //This ArrayList will be used with the RecyclerView adapter.
-                        myWeatherData.add(new Weather(day, icon, cond, temps));
+                        myDailyWeatherData.add(new Weather(dayDaily, iconDaily, condDaily, tempsDaily));
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -602,10 +607,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 myRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
                 //Initialize the adapter with the Weather data and set it to the RecyclerView.
-                myAdapter = new WeatherListAdapter(this, myWeatherData);
+                myAdapter = new WeatherListAdapter(this, myDailyWeatherData);
                 myRecyclerView.setAdapter(myAdapter);
             }
-            catch (Exception e) {
+            catch (JSONException e) {
                 e.printStackTrace();
             }
         }
@@ -628,19 +633,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //On Activity Stop, both AsyncTaskLoaders will be destroyed
         //in order to prevent re-calling the Weather API.
         super.onStop();
-        LoaderManager.getInstance(this).destroyLoader(CURRENT_WEATHER_LOADER);
-        LoaderManager.getInstance(this).destroyLoader(DETAILED_WEATHER_LOADER);
+        LoaderManager.getInstance(this).destroyLoader(LAT_LON_LOADER);
+        LoaderManager.getInstance(this).destroyLoader(WEATHER_LOADER);
     }
 
     /**
-     * The MainActivity's onStop lifecycle state.
+     * The MainActivity's onRestart lifecycle state.
      */
     @Override
     protected void onRestart() {
-        //On Activity Restart, a Toast will appear to the user to notify them that
-        //the app will need to restart in order to use any changed settings that they set.
+        //On Activity Restart, any changed settings will be applied upon the next search.
         super.onRestart();
-        Toast.makeText(this, getString(R.string.changed_setting_toast_msg), Toast.LENGTH_LONG).show();
+        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        measurementPref = sharedPref.getString(SettingsActivity.KEY_PREF_MEASUREMENT, "fahrenheit");
+
+        languagePref = sharedPref.getString(SettingsActivity.KEY_PREF_LANGUAGE, "en");
+
+        SharedPreferences.Editor preferencesEditor = sharedPref.edit();
+        preferencesEditor.putString(SettingsActivity.KEY_PREF_MEASUREMENT, measurementPref);
+        preferencesEditor.putString(SettingsActivity.KEY_PREF_LANGUAGE, languagePref);
+        preferencesEditor.apply();
     }
 
     /**
@@ -667,16 +682,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Pattern "h:mm a, z" outputs as "hour:minutes AM/PM, timezone",
      * which is then converted to a different language depending on the Locale used.
      * @param dt Time in seconds since 01-01-1970 which gets converted to current time.
-     * @param timezoneOffset Time in seconds that represents the positive or negative offset from the UTC timezone.
+     * @param timezone A String that contains the name of the timezone.
      * @return A String that is formatted as a readable time statement.
      */
-    public String getTime(long dt, int timezoneOffset) {
-        timezoneOffset = (timezoneOffset * 1000);
-        String[] availableIDs = TimeZone.getAvailableIDs(timezoneOffset);
-
+    public String getTime(long dt, String timezone) {
         Date time = new java.util.Date(dt*1000L);
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a, z", getLocale());
-        sdf.setTimeZone(java.util.TimeZone.getTimeZone(availableIDs[0]));
+        sdf.setTimeZone(java.util.TimeZone.getTimeZone(timezone));
         String formattedTime = sdf.format(time);
         return formattedTime;
     }
@@ -767,7 +779,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     public void setFavorite(View view) {
         boolean checked = ((ToggleButton) view).isChecked();
-        String searchedCity = myWeatherInput.getText().toString();
+        String searchedCity = myCityInput.getText().toString();
 
         MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
         SubMenu subMenu = favoriteLocItem.getSubMenu();
