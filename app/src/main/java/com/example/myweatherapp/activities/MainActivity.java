@@ -307,6 +307,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
+        if(id == R.id.refresh) {
+            getLatLon(myCityInput);
+            return true;
+        }
+
         if(id == R.id.clear_recent) {
             //Displays a Toast to the user relying their action.
             Toast.makeText(this, getString(R.string.rec_loc_cleared_toast_msg), Toast.LENGTH_LONG).show();

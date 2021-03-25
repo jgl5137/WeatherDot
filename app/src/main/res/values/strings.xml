@@ -47,4 +47,5 @@
     <string name="faq3a1">A: The app retrieves the Weather data of a city in the specified timezone it is located in.</string>
     <string name="faq3a2">The blue background is to help indicate that it is daytime wherever the city is, purple will indicate nighttime.</string>
     <string name="understood_button_text">Understood</string>
+    <string name="refresh_action">Refresh</string>
 </resources>
