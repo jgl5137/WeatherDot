@@ -18,7 +18,7 @@
     <string name="cardview_filler_condition">filler condition</string>
     <string name="cardview_high_low">50 / 25</string>
     <string name="city_input_hint">Enter City Name</string>
-    <string name="powered_by_label">Powered By</string>
+    <string name="credit_text">Icons and data sourced from OpenWeather!</string>
     <string name="fav_cleared_toast_msg">Your Favorites have been cleared!</string>
     <string name="rec_loc_cleared_toast_msg">Recent Locations have been cleared!</string>
     <string name="no_city_toast_msg">No city name detected. Please input a valid city name.</string>

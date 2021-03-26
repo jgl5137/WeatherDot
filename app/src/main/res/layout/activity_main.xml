@@ -32,25 +32,17 @@
             android:background="?attr/colorPrimaryVariant"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingTop="20dp">
+            android:paddingTop="30dp">
 
             <TextView
                 android:id="@+id/powered_by_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/weather_api_logo"
-                android:text="@string/powered_by_label"
+                android:layout_marginBottom="30dp"
+                android:text="@string/credit_text"
+                android:gravity="center"
+                android:textSize="16sp"
                 android:textColor="?attr/colorOnPrimary" />
-
-            <ImageView
-                android:id="@+id/weather_api_logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:adjustViewBounds="true"
-                android:maxHeight="70dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/openweatherlogo_white_cropped" />
         </RelativeLayout>
     </com.google.android.material.navigation.NavigationView>
 
