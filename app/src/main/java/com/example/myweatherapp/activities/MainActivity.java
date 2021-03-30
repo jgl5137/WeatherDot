@@ -17,6 +17,9 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,18 +27,24 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -62,7 +71,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
 
 /**
  * This class displays current and daily weather information from
@@ -97,10 +105,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private WeatherListAdapter myAdapter;
     private EditText myCityInput;
     private ImageView myWeatherBackground;
+    private int initialBackgroundHeight;
     private TextView myCurrentTimeText;
     private ImageView myCurrentConditionIcon;
     private TextView myCurrentTempText;
+    private TextView myCurrentFeelsLikeText;
     private TextView myCurrentConditionText;
+    private ImageButton expandArrowButton;
+    private ImageButton collapseArrowButton;
+    private RelativeLayout extraInfoLayout;
+    private TextView myCurrentHumidityText;
+    private TextView myCurrentCloudinessText;
+    private TextView myCurrentWindSpeedText;
+    private TextView myCurrentUVIText;
     private ArrayList<Weather> myDailyWeatherData;
     private NavigationView navigationView;
     private ArrayList<String> recentLocList;
@@ -139,17 +156,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     textView.clearFocus();
                     favoritesButton.setEnabled(true);
                     favoritesButton.setChecked(false);
+                    hideExtraInfo(collapseArrowButton);
                     return true;
                 }
                 return false;
             }
         });
         myWeatherBackground = findViewById(R.id.current_weather_background);
+        myWeatherBackground.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                initialBackgroundHeight = myWeatherBackground.getHeight();
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    myWeatherBackground.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                else {
+                    myWeatherBackground.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            }
+        });
         myWeatherBackground.setVisibility(View.INVISIBLE);
         myCurrentTimeText = findViewById(R.id.current_time_text);
         myCurrentConditionIcon = findViewById(R.id.current_condition_icon);
         myCurrentTempText = findViewById(R.id.current_temp_text);
+        myCurrentFeelsLikeText = findViewById(R.id.current_feels_like_text);
         myCurrentConditionText = findViewById(R.id.current_condition_text);
+        expandArrowButton = findViewById(R.id.expand_button);
+        collapseArrowButton = findViewById(R.id.collapse_button);
+        extraInfoLayout = findViewById(R.id.extra_info_layout);
+        myCurrentHumidityText = findViewById(R.id.humidity_text);
+        myCurrentCloudinessText = findViewById(R.id.cloudiness_text);
+        myCurrentWindSpeedText = findViewById(R.id.wind_speed_text);
+        myCurrentUVIText = findViewById(R.id.uvi_text);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
@@ -522,10 +560,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 int i = 0;
                 String timeCurrent = null;
                 String timezoneCurrent = null;
-                String conditionCurrent = null;
                 String tempCurrent = null;
+                String feelsLikeCurrent = null;
+                String conditionCurrent = null;
                 long dtCurrent;
                 String iconCurrent = null;
+                String humidityCurrent = null;
+                String cloudinessCurrent = null;
+                String windSpeedCurrent = null;
+                String uviCurrent = null;
                 long dtDaily;
                 String dayDaily;
                 String iconDaily;
@@ -546,17 +589,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         myWeatherBackground.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_night));
                     }
                     myWeatherBackground.setVisibility(View.VISIBLE);
+                    if(collapseArrowButton.getVisibility() == View.VISIBLE) {
+                        expandArrowButton.setVisibility(View.INVISIBLE);
+                    }
+                    else {
+                        expandArrowButton.setVisibility(View.VISIBLE);
+                    }
 
                     iconCurrent = jsonCurrentWeatherObject.getJSONObject(0).getString("icon");
+                    humidityCurrent = "Humidity: " + jsonCurrentObject.getInt("humidity") + "%";
+                    cloudinessCurrent = "Cloudiness: " + jsonCurrentObject.getInt("clouds") + "%";
                     //Sets the temperature measurement type based on user's settings.
                     if(measurementPref.equalsIgnoreCase("celsius")) {
                         //Celsius
                         tempCurrent = "" + jsonCurrentObject.getInt("temp") + "\u2103";
+                        feelsLikeCurrent = "Feels like: " + jsonCurrentObject.getInt("feels_like") + "\u2103";
+                        windSpeedCurrent = "Wind speed: " + String.format(getLocale(), "%.2f", (jsonCurrentObject.getDouble("wind_speed") * 3.6)) + " Km/H";
                     }
                     else {
                         //Fahrenheit
                         tempCurrent = "" + jsonCurrentObject.getInt("temp") + "\u2109";
+                        feelsLikeCurrent = "Feels like: " + jsonCurrentObject.getInt("feels_like") + "\u2109";
+                        windSpeedCurrent = "Wind speed: " + String.format(getLocale(), "%.2f", jsonCurrentObject.getDouble("wind_speed")) + " Mph";
                     }
+
+                    uviCurrent = "UV index: " + jsonCurrentObject.getInt("uvi");
                     //Fetching the weather condition string.
                     conditionCurrent = capitalize(jsonCurrentWeatherObject.getJSONObject(0).getString("description"));
                 }
@@ -570,7 +627,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     String iconURL = "https://openweathermap.org/img/wn/" + iconCurrent + ".png";
                     Glide.with(this).load(iconURL).override(250, 250).into(myCurrentConditionIcon);
                     myCurrentTempText.setText(tempCurrent);
+                    myCurrentFeelsLikeText.setText(feelsLikeCurrent);
                     myCurrentConditionText.setText(conditionCurrent);
+                    myCurrentHumidityText.setText(humidityCurrent);
+                    myCurrentCloudinessText.setText(cloudinessCurrent);
+                    myCurrentWindSpeedText.setText(windSpeedCurrent);
+                    myCurrentUVIText.setText(uviCurrent);
                 }
 
                 //Traversing each item within the JSONArray.
@@ -833,5 +895,58 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for(int i = 0; i < citiesList.size(); i++) {
             subMenu.add(Menu.FIRST, Menu.FIRST, (800 - 5), citiesList.get(i).getMyCity());
         }
+    }
+
+    public void showExtraInfo(View view) {
+        expandLayout(myWeatherBackground, 500, myWeatherBackground.getHeight(), 1000);
+        view.setVisibility(View.INVISIBLE);
+        collapseArrowButton.setVisibility(View.VISIBLE);
+        extraInfoLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void expandLayout(final View view, int duration, int prevHeight, int targetHeight) {
+        Log.d("old_height", "" + prevHeight);
+
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(prevHeight, targetHeight);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                view.getLayoutParams().height = (int) valueAnimator.getAnimatedValue();
+                view.requestLayout();
+            }
+        });
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
+        valueAnimator.setDuration(duration);
+        valueAnimator.start();
+    }
+
+    public void hideExtraInfo(View view) {
+        Log.d("prevHeight", "" + initialBackgroundHeight);
+        collapseLayout(myWeatherBackground, 500, initialBackgroundHeight);
+        view.setVisibility(View.INVISIBLE);
+        expandArrowButton.setVisibility(View.VISIBLE);
+    }
+
+    public void collapseLayout(final View view, int duration, int targetHeight) {
+        int prevHeight = view.getHeight();
+
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(prevHeight, targetHeight);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                view.getLayoutParams().height = (int) valueAnimator.getAnimatedValue();
+                view.requestLayout();
+            }
+        });
+        valueAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                extraInfoLayout.setVisibility(View.INVISIBLE);
+            }
+        });
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
+        valueAnimator.setDuration(duration);
+        valueAnimator.start();
     }
 }
