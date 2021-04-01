@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,8 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
     private final LayoutInflater myInflater;
     private ArrayList<Weather> myWeather;
     private Context myContext;
+    private int mExpandedPosition = -1;
+    private int prevExpandedPosition = -1;
 
     /**
      * Constructor that passes in the daily Weather data and the context.
@@ -64,7 +67,28 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
             Glide.with(myContext).load(iconURL).override(110, 110).into(holder.myConditionView);
             holder.myConditionText.setText(current.getCondition());
             holder.myHighLowText.setText(current.getTemp_high_low());
+            holder.myCardPrecipitation.setText(current.getPrecipitation());
+            holder.myCardHumidity.setText(current.getHumidity());
+            holder.myCardCloudiness.setText(current.getCloudiness());
+            holder.myCardWindSpeed.setText(current.getWind_speed());
         }
+
+        boolean isExpanded = position==mExpandedPosition;
+        holder.myCardDetails.setVisibility(isExpanded?View.VISIBLE:View.GONE);
+        holder.itemView.setActivated(isExpanded);
+
+        if(isExpanded) {
+            prevExpandedPosition = position;
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mExpandedPosition = isExpanded ? -1 : position;
+                notifyItemChanged(prevExpandedPosition);
+                notifyItemChanged(position);
+            }
+        });
     }
 
     /**
@@ -91,6 +115,11 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         private ImageView myConditionView;
         private TextView myConditionText;
         private TextView myHighLowText;
+        private RelativeLayout myCardDetails;
+        private TextView myCardPrecipitation;
+        private TextView myCardHumidity;
+        private TextView myCardCloudiness;
+        private TextView myCardWindSpeed;
 
         /**
          * Constructor for the ViewHolder, used in onCreateViewHolder().
@@ -103,6 +132,11 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
             myConditionView = itemView.findViewById(R.id.condition_image);
             myConditionText = itemView.findViewById(R.id.condition_field);
             myHighLowText = itemView.findViewById(R.id.temp_high_low);
+            myCardDetails = itemView.findViewById(R.id.card_detail);
+            myCardPrecipitation = itemView.findViewById(R.id.card_precipitation);
+            myCardHumidity = itemView.findViewById(R.id.card_humidity);
+            myCardCloudiness = itemView.findViewById(R.id.card_cloudiness);
+            myCardWindSpeed = itemView.findViewById(R.id.card_wind_speed);
         }
     }
 }

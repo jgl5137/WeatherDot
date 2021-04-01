@@ -16,6 +16,7 @@ import androidx.loader.content.Loader;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -156,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     textView.clearFocus();
                     favoritesButton.setEnabled(true);
                     favoritesButton.setChecked(false);
-                    hideExtraInfo(collapseArrowButton);
                     return true;
                 }
                 return false;
@@ -547,6 +547,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if(id == WEATHER_LOADER && data != null) {
             //Try to get (split between current and daily weather categories) deltaTime, timezone, temperatures, weather conditions, and condition icons from the data.
+            //Also gets the extra details like probability of precipitation, humidity, cloudiness, wind speed, and UV index.
             //Catch if any field is empty and move on.
             try{
                 JSONObject jsonDetailedObject = new JSONObject(data);
@@ -574,6 +575,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String iconDaily;
                 String condDaily;
                 String tempsDaily;
+                String precipDaily;
+                String humidDaily;
+                String cloudDaily;
+                String windDaily;
                 myDailyWeatherData = new ArrayList<>();
                 String timezoneDaily = jsonDetailedObject.getString("timezone");
 
@@ -581,7 +586,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     dtCurrent = jsonCurrentObject.getLong("dt");
                     timezoneCurrent = jsonDetailedObject.getString("timezone");
                     timeCurrent = getTime(dtCurrent, timezoneCurrent);
-                    //Sets the color fo the current weather display based on time of day.
+                    //Sets the color for the current weather display based on time of day.
                     if(isItDaytime(timeCurrent)) {
                         myWeatherBackground.setBackground(ContextCompat.getDrawable(this, R.drawable.gradient_day));
                     }
@@ -648,19 +653,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         dayDaily = getDate(dtDaily, timezoneDaily);
                         iconDaily = weatherArrObject.getString("icon");
                         condDaily = capitalize(weatherArrObject.getString("description"));
+                        precipDaily = "Precipitation: " + String.format(getLocale(), "%.0f", (daily.getDouble("pop") * 100)) + "%";
+                        humidDaily = "Humidity: " + daily.getInt("humidity") + "%";
+                        cloudDaily = "Cloudiness: " + daily.getInt("clouds") + "%";
 
                         if(measurementPref.equalsIgnoreCase("celsius")) {
                             //Celsius
                             tempsDaily = getString(R.string.temp_high) + temp.getInt("max") + "\u2103 \n" + getString(R.string.temp_low) + temp.getInt("min") + "\u2103";
+                            windDaily = "Wind speed: " + String.format(getLocale(), "%.2f", (daily.getDouble("wind_speed") * 3.6)) + " Km/H";
                         }
                         else {
                             //Fahrenheit
                             tempsDaily = getString(R.string.temp_high) + temp.getInt("max") + "\u2109 \n" + getString(R.string.temp_low) + temp.getInt("min") + "\u2109";
+                            windDaily = "Wind speed: " + String.format(getLocale(), "%.2f", daily.getDouble("wind_speed")) + " Mph";
                         }
 
                         //Adding to the arrayList that holds newly created Weather objects that are made from the recently fetched data.
                         //This ArrayList will be used with the RecyclerView adapter.
-                        myDailyWeatherData.add(new Weather(dayDaily, iconDaily, condDaily, tempsDaily));
+                        myDailyWeatherData.add(new Weather(dayDaily, iconDaily, condDaily, tempsDaily, precipDaily, humidDaily, cloudDaily, windDaily));
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -675,6 +685,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 //Initialize the adapter with the Weather data and set it to the RecyclerView.
                 myAdapter = new WeatherListAdapter(this, myDailyWeatherData);
+                ((SimpleItemAnimator) myRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
                 myRecyclerView.setAdapter(myAdapter);
             }
             catch (JSONException e) {
