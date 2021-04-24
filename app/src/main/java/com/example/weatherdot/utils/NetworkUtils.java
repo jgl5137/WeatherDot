@@ -1,7 +1,6 @@
-package com.example.myweatherapp.utils;
+package com.example.weatherdot.utils;
 
 import android.net.Uri;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 public class NetworkUtils {
-    private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
+//    private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
     private static final String API_KEY = "e83f7c0a2b6d6c8316fea85fb334134c";
     //Base URL for OpenWeather API
     private static final String LAT_LON_OPEN_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?";
@@ -115,10 +114,6 @@ public class NetworkUtils {
             }
 
             latLonJSONString = builder.toString();
-
-            //Read the API's output for debugging purposes.
-            Log.d(LOG_TAG, latLonJSONString);
-            Log.d(LOG_TAG, builtURI.toString());
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -225,9 +220,6 @@ public class NetworkUtils {
             }
 
             weatherJSONString = builder.toString();
-
-            //Read the API's output for debugging purposes.
-            Log.d(LOG_TAG, weatherJSONString);
         }
         catch (IOException e) {
             e.printStackTrace();

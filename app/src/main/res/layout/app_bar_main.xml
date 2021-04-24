@@ -12,7 +12,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MyWeatherApp.AppBarOverlay">
+        android:theme="@style/Theme.WeatherDot.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -20,8 +20,8 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
-            android:theme="@style/Theme.MyWeatherApp"
-            app:popupTheme="@style/Theme.MyWeatherApp.PopupOverlay"
+            android:theme="@style/Theme.WeatherDot"
+            app:popupTheme="@style/Theme.WeatherDot.PopupOverlay"
             app:titleTextColor="@color/white">
 
             <EditText

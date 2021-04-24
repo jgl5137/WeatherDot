@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.myweatherapp">
+    package="com.example.weatherdot"
+    android:installLocation="auto">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,11 +12,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/weather_dot_icon_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MyWeatherApp">
+        android:theme="@style/Theme.WeatherDot">
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.example.weatherdot.activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MyWeatherApp.NoActionBar"
+            android:theme="@style/Theme.WeatherDot.NoActionBar"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -25,15 +26,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.SettingsActivity"
+            android:name="com.example.weatherdot.activities.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".activities.MainActivity"
+            android:parentActivityName="com.example.weatherdot.activities.MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MyWeatherApp">
+            android:theme="@style/Theme.WeatherDot">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value="com.example.weatherdot.activities.MainActivity" />
         </activity>
     </application>
 

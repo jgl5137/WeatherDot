@@ -48,4 +48,10 @@
     <string name="faq3a2">The blue background is to help indicate that it is daytime wherever the city is, purple will indicate nighttime.</string>
     <string name="understood_button_text">Understood</string>
     <string name="refresh_action">Refresh</string>
+    <string name="humidity">Humidity: </string>
+    <string name="cloudiness">Cloudiness: </string>
+    <string name="feels_like">Feels like: </string>
+    <string name="wind_speed">Wind speed: </string>
+    <string name="uv_index">UV index: </string>
+    <string name="precipitation">Precipitation: </string>
 </resources>

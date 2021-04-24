@@ -1,4 +1,4 @@
-package com.example.myweatherapp.objects;
+package com.example.weatherdot.objects;
 
 public class Weather {
 

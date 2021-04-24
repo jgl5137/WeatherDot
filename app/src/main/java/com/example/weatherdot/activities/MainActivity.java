@@ -1,4 +1,4 @@
-package com.example.myweatherapp.activities;
+package com.example.weatherdot.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +30,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -38,10 +39,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -51,13 +54,13 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
-import com.example.myweatherapp.R;
-import com.example.myweatherapp.adapters.WeatherListAdapter;
-import com.example.myweatherapp.database.City;
-import com.example.myweatherapp.database.CityViewModel;
-import com.example.myweatherapp.loaders.LatLonLoader;
-import com.example.myweatherapp.loaders.WeatherLoader;
-import com.example.myweatherapp.objects.Weather;
+import com.example.weatherdot.R;
+import com.example.weatherdot.adapters.WeatherListAdapter;
+import com.example.weatherdot.database.City;
+import com.example.weatherdot.database.CityViewModel;
+import com.example.weatherdot.loaders.LatLonLoader;
+import com.example.weatherdot.loaders.WeatherLoader;
+import com.example.weatherdot.objects.Weather;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
@@ -235,6 +238,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Initialize a HashSet of favorite cities in order to check for duplicates.
         favCitiesSet = new HashSet<>();
 
+        for(int i = 0; i < myCities.size(); i++) {
+            favCitiesSet.add(myCities.get(i).getMyCity());
+        }
+
         //Fetches the user's preferences from the Settings menu.
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false);
 
@@ -264,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Action for items within the 'Favorites' sub-menu.
         if(item.getItemId() == Menu.FIRST) {
             drawer.closeDrawer(GravityCompat.START);
-            myCityInput.setText(item.getTitle());
+            myCityInput.setText(item.getTitle().toString().trim());
             favoritesButton.setEnabled(true);
             favoritesButton.setChecked(true);
             getLatLon(myCityInput);
@@ -274,8 +281,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Action for items within the 'Recent Locations' sub-menu.
         if(item.getItemId() == Menu.NONE) {
             drawer.closeDrawer(GravityCompat.START);
-            myCityInput.setText(item.getTitle());
+            myCityInput.setText(item.getTitle().toString().trim());
             favoritesButton.setEnabled(true);
+            favoritesButton.setChecked(false);
             getLatLon(myCityInput);
             return true;
         }
@@ -314,8 +322,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setData(Uri.parse("mailto:"));
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[] {"Jlau219@gmail.com"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Weather App Feedback");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[] {"sbedeveloper@gmail.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "WeatherDot Feedback");
             if(intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(intent);
                 return true;
@@ -382,8 +390,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             //Clears the 'City' table within the Room database.
                             myCityViewModel.deleteAllCities();
                             favoritesButton.setChecked(false);
-                            //Clears the cached ArrayList copy of favorite cities.
+                            //Clears the cached ArrayList and HashSet copy of favorite cities.
                             myCities.clear();
+                            favCitiesSet.clear();
                             //Clears the 'Favorites' sub-menu.
                             subMenu.clear();
                         }
@@ -402,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     public void getLatLon(View view) {
         //Get the search string from the input field.
-        String queryString = myCityInput.getText().toString();
+        String queryString = myCityInput.getText().toString().trim();
 
         //Closes the keyboard after clicking the 'Search' button
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -517,7 +526,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 //Creates and adds a new menu item to the 'Recent Locations' sub-menu.
                 //If the city is already in the sub-menu, a duplicate will not be made.
-                if(!recentLocList.contains(jsonObject.getString("name"))) {
+
+                Log.d("The set", favCitiesSet.toString());
+
+                Log.d("check this", String.valueOf(favCitiesSet.contains(myCityInput.getText().toString())));
+                if(!recentLocList.contains(jsonObject.getString("name")) && !favCitiesSet.contains(myCityInput.getText().toString())) {
                     MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
                     SubMenu subMenu = recentLocItem.getSubMenu();
                     subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), capitalize(myCityInput.getText().toString()));
@@ -602,23 +615,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
 
                     iconCurrent = jsonCurrentWeatherObject.getJSONObject(0).getString("icon");
-                    humidityCurrent = "Humidity: " + jsonCurrentObject.getInt("humidity") + "%";
-                    cloudinessCurrent = "Cloudiness: " + jsonCurrentObject.getInt("clouds") + "%";
+                    humidityCurrent = getString(R.string.humidity) + " " + jsonCurrentObject.getInt("humidity") + "%";
+                    cloudinessCurrent = getString(R.string.cloudiness) + " " + jsonCurrentObject.getInt("clouds") + "%";
                     //Sets the temperature measurement type based on user's settings.
                     if(measurementPref.equalsIgnoreCase("celsius")) {
                         //Celsius
                         tempCurrent = "" + jsonCurrentObject.getInt("temp") + "\u2103";
-                        feelsLikeCurrent = "Feels like: " + jsonCurrentObject.getInt("feels_like") + "\u2103";
-                        windSpeedCurrent = "Wind speed: " + String.format(getLocale(), "%.2f", (jsonCurrentObject.getDouble("wind_speed") * 3.6)) + " Km/H";
+                        feelsLikeCurrent = getString(R.string.feels_like) + " " + jsonCurrentObject.getInt("feels_like") + "\u2103";
+                        windSpeedCurrent = getString(R.string.wind_speed) + " " + String.format(getLocale(), "%.2f", (jsonCurrentObject.getDouble("wind_speed") * 3.6)) + " Km/H";
                     }
                     else {
                         //Fahrenheit
                         tempCurrent = "" + jsonCurrentObject.getInt("temp") + "\u2109";
-                        feelsLikeCurrent = "Feels like: " + jsonCurrentObject.getInt("feels_like") + "\u2109";
-                        windSpeedCurrent = "Wind speed: " + String.format(getLocale(), "%.2f", jsonCurrentObject.getDouble("wind_speed")) + " Mph";
+                        feelsLikeCurrent = getString(R.string.feels_like) + " " + jsonCurrentObject.getInt("feels_like") + "\u2109";
+                        windSpeedCurrent = getString(R.string.wind_speed) + " " + String.format(getLocale(), "%.2f", jsonCurrentObject.getDouble("wind_speed")) + " Mph";
                     }
 
-                    uviCurrent = "UV index: " + jsonCurrentObject.getInt("uvi");
+                    uviCurrent = getString(R.string.uv_index) + " " + jsonCurrentObject.getInt("uvi");
                     //Fetching the weather condition string.
                     conditionCurrent = capitalize(jsonCurrentWeatherObject.getJSONObject(0).getString("description"));
                 }
@@ -637,6 +650,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     myCurrentHumidityText.setText(humidityCurrent);
                     myCurrentCloudinessText.setText(cloudinessCurrent);
                     myCurrentWindSpeedText.setText(windSpeedCurrent);
+                    if(languagePref.equalsIgnoreCase("de")) {
+                        myCurrentWindSpeedText.setTextSize(13);
+                    }
                     myCurrentUVIText.setText(uviCurrent);
                 }
 
@@ -653,19 +669,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         dayDaily = getDate(dtDaily, timezoneDaily);
                         iconDaily = weatherArrObject.getString("icon");
                         condDaily = capitalize(weatherArrObject.getString("description"));
-                        precipDaily = "Precipitation: " + String.format(getLocale(), "%.0f", (daily.getDouble("pop") * 100)) + "%";
-                        humidDaily = "Humidity: " + daily.getInt("humidity") + "%";
-                        cloudDaily = "Cloudiness: " + daily.getInt("clouds") + "%";
+                        precipDaily = getString(R.string.precipitation) + " " + String.format(getLocale(), "%.0f", (daily.getDouble("pop") * 100)) + "%";
+                        humidDaily = getString(R.string.humidity) + " " + daily.getInt("humidity") + "%";
+                        cloudDaily = getString(R.string.cloudiness) + " " + daily.getInt("clouds") + "%";
 
                         if(measurementPref.equalsIgnoreCase("celsius")) {
                             //Celsius
                             tempsDaily = getString(R.string.temp_high) + temp.getInt("max") + "\u2103 \n" + getString(R.string.temp_low) + temp.getInt("min") + "\u2103";
-                            windDaily = "Wind speed: " + String.format(getLocale(), "%.2f", (daily.getDouble("wind_speed") * 3.6)) + " Km/H";
+                            windDaily = getString(R.string.wind_speed) + " " + String.format(getLocale(), "%.2f", (daily.getDouble("wind_speed") * 3.6)) + " Km/H";
                         }
                         else {
                             //Fahrenheit
                             tempsDaily = getString(R.string.temp_high) + temp.getInt("max") + "\u2109 \n" + getString(R.string.temp_low) + temp.getInt("min") + "\u2109";
-                            windDaily = "Wind speed: " + String.format(getLocale(), "%.2f", daily.getDouble("wind_speed")) + " Mph";
+                            windDaily = getString(R.string.wind_speed) + " " + String.format(getLocale(), "%.2f", daily.getDouble("wind_speed")) + " Mph";
                         }
 
                         //Adding to the arrayList that holds newly created Weather objects that are made from the recently fetched data.
@@ -781,13 +797,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static boolean isItDaytime(String currentTime) {
         boolean isDaytime = false;
         try {
-            Date time1 = new SimpleDateFormat("HH:mm", getLocale()).parse("06:00");
+            Date time1 = new SimpleDateFormat("HH:mm", getLocale()).parse("06:30");
 
-            Date time2 = new SimpleDateFormat("HH:mm", getLocale()).parse("18:00");
+            Date time2 = new SimpleDateFormat("HH:mm", getLocale()).parse("18:30");
 
             Date timeCurrent = new SimpleDateFormat("h:mm a", getLocale()).parse(currentTime);
 
-            //If current time is AFTER 6 AM and BEFORE 6 PM
+            //If current time is AFTER 6:30 AM and BEFORE 6:30 PM
             if(timeCurrent.after(time1) && timeCurrent.before(time2)) {
                 isDaytime = true;
             }
@@ -862,18 +878,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
         SubMenu subMenu = favoriteLocItem.getSubMenu();
 
+        MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
+        SubMenu subMenu2 = recentLocItem.getSubMenu();
+
         for(int i = 0; i < myCities.size(); i++) {
             //Populate the HashSet with favorite cities in order to check if it already exists.
             favCitiesSet.add(myCities.get(i).getMyCity());
         }
         if(checked && !favCitiesSet.contains(searchedCity) && searchedCity.trim().length() > 0) {
             myCityViewModel.insert(new City(searchedCity));
+            favCitiesSet.add(searchedCity);
 
+            //Adds the new favorite city to 'Favorites' section, while also removing it from 'Recent Locations' section.
             subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), searchedCity);
+
+            for(int i = 0; i < recentLocList.size(); i++) {
+                if(recentLocList.contains(searchedCity)) {
+                    recentLocList.remove(searchedCity);
+                }
+            }
+
+            recreateRecentLocations();
 
             Toast.makeText(this, "\"" + searchedCity + "\"" + getString(R.string.added_to_fav_toast_msg), Toast.LENGTH_LONG).show();
         }
-        if(checked && favCitiesSet.contains(searchedCity)) {
+        else if(checked && favCitiesSet.contains(searchedCity)) {
             //If a favorite city is manually searched for and is already a favorite,
             //this message is displayed if the user tries to favorite it again.
             Toast.makeText(this, getString(R.string.already_fav_toast_msg), Toast.LENGTH_LONG).show();
@@ -891,6 +920,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     subMenu.clear();
 
                     createInitialFavorites(myCities);
+
+                    //Takes the city and adds it back into the 'Recent Locations' section.
+                    recentLocList.add(searchedCity);
+                    recreateRecentLocations();
                 }
             }
         }
@@ -908,16 +941,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * Method is ued to re-create the 'Recent Locations' sub-menu in the Navigation Drawer.
+     */
+    public void recreateRecentLocations() {
+        MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
+        SubMenu subMenu = recentLocItem.getSubMenu();
+
+        subMenu.clear();
+        for(int i = 0 ; i < recentLocList.size(); i++) {
+            subMenu.add(Menu.NONE, Menu.NONE, (800 - 5), recentLocList.get(i));
+        }
+    }
+
+    /**
+     * Wrapper method to initiate the expansion of the WeatherBackground view.
+     * @param view The expand button that is clicked in order to expand the WeatherBackground view.
+     */
     public void showExtraInfo(View view) {
         expandLayout(myWeatherBackground, 500, myWeatherBackground.getHeight(), 1000);
         view.setVisibility(View.INVISIBLE);
         collapseArrowButton.setVisibility(View.VISIBLE);
+        collapseArrowButton.setEnabled(false);
         extraInfoLayout.setVisibility(View.VISIBLE);
+
+        //Adds a delay between button clicks in order to prevent extraInfoLayout from breaking.
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                collapseArrowButton.setEnabled(true);
+            }
+        }, 650);
     }
 
+    /**
+     * Method that expands the WeatherBackground view height-wise using ValueAnimator.
+     * @param view The WeatherBackground view
+     * @param duration The amount of time it takes in milliseconds to complete the expanding animation.
+     * @param prevHeight The original height value of the WeatherBackground.
+     * @param targetHeight The height value that the WeatherBackground should be increased to.
+     */
     public void expandLayout(final View view, int duration, int prevHeight, int targetHeight) {
-        Log.d("old_height", "" + prevHeight);
-
         ValueAnimator valueAnimator = ValueAnimator.ofInt(prevHeight, targetHeight);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -931,13 +997,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         valueAnimator.start();
     }
 
+    /**
+     * Wrapper method to initiate the collapse of the WeatherBackground view.
+     * @param view The collapse button that is clicked in order to shrink the WeatherBackground view.
+     */
     public void hideExtraInfo(View view) {
-        Log.d("prevHeight", "" + initialBackgroundHeight);
         collapseLayout(myWeatherBackground, 500, initialBackgroundHeight);
         view.setVisibility(View.INVISIBLE);
         expandArrowButton.setVisibility(View.VISIBLE);
+        expandArrowButton.setEnabled(false);
+
+        //Adds a delay between button clicks in order to prevent extraInfoLayout from breaking.
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                expandArrowButton.setEnabled(true);
+            }
+        }, 650);
     }
 
+    /**
+     * Method that shrinks the WeatherBackground view height-wise using ValueAnimator.
+     * @param view The WeatherBackground view
+     * @param duration The amount of time it takes in milliseconds to complete the expanding animation.
+     * @param targetHeight The original height value of the WeatherBackground prior to expansion.
+     */
     public void collapseLayout(final View view, int duration, int targetHeight) {
         int prevHeight = view.getHeight();
 

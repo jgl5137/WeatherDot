@@ -1,4 +1,4 @@
-package com.example.myweatherapp.database;
+package com.example.weatherdot.database;
 
 import android.app.Application;
 
