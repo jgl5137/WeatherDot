@@ -650,9 +650,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     myCurrentHumidityText.setText(humidityCurrent);
                     myCurrentCloudinessText.setText(cloudinessCurrent);
                     myCurrentWindSpeedText.setText(windSpeedCurrent);
-                    if(languagePref.equalsIgnoreCase("de")) {
-                        myCurrentWindSpeedText.setTextSize(13);
-                    }
                     myCurrentUVIText.setText(uviCurrent);
                 }
 
@@ -877,9 +874,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         MenuItem favoriteLocItem = navigationView.getMenu().findItem(R.id.favorite_locations);
         SubMenu subMenu = favoriteLocItem.getSubMenu();
-
-        MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
-        SubMenu subMenu2 = recentLocItem.getSubMenu();
 
         for(int i = 0; i < myCities.size(); i++) {
             //Populate the HashSet with favorite cities in order to check if it already exists.
