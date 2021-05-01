@@ -1,4 +1,4 @@
-package com.example.weatherdot.loaders;
+package self.sbdev.weatherdot.loaders;
 
 import android.content.Context;
 
@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.loader.content.AsyncTaskLoader;
 
-import com.example.weatherdot.utils.NetworkUtils;
+import self.sbdev.weatherdot.utils.NetworkUtils;
 
 public class LatLonLoader extends AsyncTaskLoader<String> {
 

@@ -1,4 +1,4 @@
-package com.example.weatherdot.activities;
+package self.sbdev.weatherdot.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,18 +33,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -54,13 +51,13 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
-import com.example.weatherdot.R;
-import com.example.weatherdot.adapters.WeatherListAdapter;
-import com.example.weatherdot.database.City;
-import com.example.weatherdot.database.CityViewModel;
-import com.example.weatherdot.loaders.LatLonLoader;
-import com.example.weatherdot.loaders.WeatherLoader;
-import com.example.weatherdot.objects.Weather;
+import self.sbdev.weatherdot.R;
+import self.sbdev.weatherdot.adapters.WeatherListAdapter;
+import self.sbdev.weatherdot.database.City;
+import self.sbdev.weatherdot.database.CityViewModel;
+import self.sbdev.weatherdot.loaders.LatLonLoader;
+import self.sbdev.weatherdot.loaders.WeatherLoader;
+import self.sbdev.weatherdot.objects.Weather;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
@@ -526,10 +523,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 //Creates and adds a new menu item to the 'Recent Locations' sub-menu.
                 //If the city is already in the sub-menu, a duplicate will not be made.
-
-                Log.d("The set", favCitiesSet.toString());
-
-                Log.d("check this", String.valueOf(favCitiesSet.contains(myCityInput.getText().toString())));
                 if(!recentLocList.contains(jsonObject.getString("name")) && !favCitiesSet.contains(myCityInput.getText().toString())) {
                     MenuItem recentLocItem = navigationView.getMenu().findItem(R.id.recent_locations);
                     SubMenu subMenu = recentLocItem.getSubMenu();

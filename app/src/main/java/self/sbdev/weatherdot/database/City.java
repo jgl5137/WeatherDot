@@ -1,4 +1,4 @@
-package com.example.weatherdot.database;
+package self.sbdev.weatherdot.database;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

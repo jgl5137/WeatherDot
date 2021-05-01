@@ -1,4 +1,4 @@
-package com.example.weatherdot.adapters;
+package self.sbdev.weatherdot.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.weatherdot.R;
-import com.example.weatherdot.objects.Weather;
+import self.sbdev.weatherdot.R;
+import self.sbdev.weatherdot.objects.Weather;
 
 import java.util.ArrayList;
 

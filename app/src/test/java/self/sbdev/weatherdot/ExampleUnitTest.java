@@ -1,4 +1,4 @@
-package com.example.weatherdot;
+package self.sbdev.weatherdot;
 
 import org.junit.Test;
 

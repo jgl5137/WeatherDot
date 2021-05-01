@@ -1,4 +1,4 @@
-package com.example.weatherdot.objects;
+package self.sbdev.weatherdot.objects;
 
 public class Weather {
 

@@ -1,4 +1,4 @@
-package com.example.weatherdot.activities;
+package self.sbdev.weatherdot.activities;
 
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
 
-import com.example.weatherdot.R;
+import self.sbdev.weatherdot.R;
 
 public class SettingsActivity extends AppCompatActivity {
 

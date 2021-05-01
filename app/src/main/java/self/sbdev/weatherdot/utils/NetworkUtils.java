@@ -1,4 +1,4 @@
-package com.example.weatherdot.utils;
+package self.sbdev.weatherdot.utils;
 
 import android.net.Uri;
 

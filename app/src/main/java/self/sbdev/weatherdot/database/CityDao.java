@@ -1,4 +1,4 @@
-package com.example.weatherdot.database;
+package self.sbdev.weatherdot.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
