@@ -8,7 +8,7 @@ WeatherDot is my first completed Android app after finishing Google's Android De
 
 WeatherDot utilizes OpenWeather's free [Weather API](https://openweathermap.org/api) for all of the data and weather icons shown inside of the app.
 
-![City Search Night](https://drive.google.com/file/d/1f9HTzM7hR4hXuSwhqABDoCptnLkv7vhE/view?usp=sharing) ![City Search Day](https://drive.google.com/file/d/19V09G0lkzfZ76q2lHlVn-fmnOZIKKLAu/view?usp=sharing) ![Navigation Drawer](https://drive.google.com/file/d/1Or-HBgS5QishLfci-YdxvxIrWSBb3l-h/view?usp=sharing) 
+![City Search Night](https://photos.app.goo.gl/NoGkDA22DZT75wxCA) ![City Search Day](https://photos.app.goo.gl/6LFLdNbSmSXtpYWt6) ![Navigation Drawer](https://photos.app.goo.gl/bdqy3XZQ7Z9GNDNr7) 
 
 Here's what you'll find when using WeatherDot:
 
@@ -33,4 +33,4 @@ Here's what you'll find when using WeatherDot:
 
 ## License
 
-This project is licensed under the [MIT] License - see the LICENSE.md file for details
+This project is licensed under the MIT License - see the LICENSE.md file for details
