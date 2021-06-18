@@ -8,9 +8,7 @@ WeatherDot is my first completed Android app after finishing Google's Android De
 
 WeatherDot utilizes OpenWeather's free [Weather API](https://openweathermap.org/api) for all of the data and weather icons shown inside of the app.
 
-
-![City Search Night](https://user-images.githubusercontent.com/49157787/122493362-8dcd3c00-cfb5-11eb-86eb-e54ead97754d.png) ![City Search Day](https://user-images.githubusercontent.com/49157787/122493441-b1908200-cfb5-11eb-921a-68a0f330d0e6.png) ![Navigation Drawer](https://user-images.githubusercontent.com/49157787/122493479-c4a35200-cfb5-11eb-8d8f-9298b38164ab.png)
-
+<img src="https://user-images.githubusercontent.com/49157787/122493362-8dcd3c00-cfb5-11eb-86eb-e54ead97754d.png" width="300" height="600"> <img src="https://user-images.githubusercontent.com/49157787/122493441-b1908200-cfb5-11eb-921a-68a0f330d0e6.png" width="300" height="600"> <img src="https://user-images.githubusercontent.com/49157787/122493479-c4a35200-cfb5-11eb-8d8f-9298b38164ab.png" width="300" height="600">
 
 Here's what you'll find when using WeatherDot:
 
